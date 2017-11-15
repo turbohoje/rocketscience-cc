@@ -1,0 +1,3123 @@
+diff -r --exclude=.svn v537/app/controllers/companies_controller.rb v516/app/controllers/companies_controller.rb
+112,132c112
+<     @obj = Company.find(params[:id])
+<     @obj.deleted_at = Time.now
+<     if @obj.save
+<       #@obj.destroy
+<       @res[:success] = true
+<       @res[:message] = 'Deleted'
+<       render(:text => @res.to_json, :status => :ok)
+<     elsif(current_user.id == params[:id].to_i)
+<       @res[:success] = false
+<       @message = "You can't delete yourself. You are currently logged in as current user."
+<       @res[:message] = @message
+<       render :text => @res.to_json, :status => :unprocessable_entity
+<     else
+<       @res[:success] = false
+<       @message = "Unable to delete the user."
+<       @res[:message] = @message
+<       render :text => @res.to_json, :status => :unprocessable_entity
+<     end
+< 
+< 
+< 
+---
+>     @obj = Company.find(params[:id]) 
+137,188c117,168
+<     #    @company_users = @obj.users
+<     #    @company_user_groups = @obj.user_groups
+<     #    @company_devices = @obj.devices
+<     #    @company_device_groups = @obj.device_groups
+<     #    @company_gateways = @obj.gateways
+<     #    @company_recipients = @obj.recipients
+<     #    @company_alert_lists = @obj.alert_lists
+<     #    @company_user_groups.each do|user_group|
+<     #      user_group.update_user_deleted_at!('de-activate')
+<     #      user_and_its_group = UserAndItsGroups.find_by_user_group_id(user_group.id)
+<     #      user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<     #    end if @company_user_groups
+<     #    @company_users.each do|user|
+<     #      user.update_user_deleted_at!('de-activate')
+<     #      user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+<     #      user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<     #      Log.create(:user_id => user.id,:deleted_by => current_user.id )
+<     #    end if @company_users
+<     #    @company_devices.each do|device|
+<     #      device.update_device_deleted_at!('de-activate')
+<     #      device_alert_and_group =  DeviceAlertAndGroup.find_by_device_id(device.id)
+<     #      device_alert_and_group.update_attributes(:deleted_at => Time.now.utc) if !device_alert_and_group.blank?
+<     #      device_heiarchy = DeviceHeiarchy.find_by_device_id(device.id)
+<     #      device_heiarchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiarchy.blank?
+<     #      Log.create(:device_id => device.id,:deleted_by => current_user.id )
+<     #    end if @company_devices
+<     #    @company_device_groups.each do|device_group|
+<     #      device_group.update_device_deleted_at!('de-activate')
+<     #      Log.create(:device_group_id => device_group.id,:deleted_by => current_user.id )
+<     #    end if @company_device_groups
+<     #    @company_gateways.each do|gateway|
+<     #      gateway.update_gateway_deleted_at!('de-activate')
+<     #      Log.create(:gateway_id => gateway.id,:deleted_by => current_user.id )
+<     #    end if @company_gateways
+<     #    @company_recipients.each do|recipient|
+<     #      recipient.update_recipient_deleted_at!('de-activate')
+<     #      Log.create(:recipient_id => recipient.id,:deleted_by => current_user.id )
+<     #    end if @company_recipients
+<     #    @company_alert_lists.each do|alert_list|
+<     #      alert_list = AlertList.find(alert_list.id)
+<     #      alert_list.update_attributes(:deleted_at => Time.now.utc)
+<     #      AlertListRecipient.update_all ['deleted_at = ?', Time.now.utc], ['alert_list_id = ?', alert_list.id]
+<     #      Log.create(:alert_list_id => alert_list.id,:deleted_by => current_user.id)
+<     #    end if @company_alert_lists
+<     #    device_heiararchy = DeviceHeiarchy.find_by_company_id(@obj.id)
+<     #    device_heiararchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiararchy.blank?
+<     #    Log.create(:company_id => @obj.id,:deleted_by => current_user.id )
+<     #    @obj.update_company_deleted_at!('de-activate')
+<     #    #@obj.destroy
+<     #    @res[:success] = true
+<     #    @res[:message] = 'Company deleted'
+<     #    render(:text => @res.to_json, :status => :ok)
+---
+>     @company_users = @obj.users
+>     @company_user_groups = @obj.user_groups
+>     @company_devices = @obj.devices
+>     @company_device_groups = @obj.device_groups
+>     @company_gateways = @obj.gateways
+>     @company_recipients = @obj.recipients
+>     @company_alert_lists = @obj.alert_lists
+>     @company_user_groups.each do|user_group|
+>       user_group.update_user_deleted_at!('de-activate')
+>       user_and_its_group = UserAndItsGroups.find_by_user_group_id(user_group.id)
+>       user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>     end if @company_user_groups
+>     @company_users.each do|user|
+>       user.update_user_deleted_at!('de-activate')
+>       user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+>       user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>       Log.create(:user_id => user.id,:deleted_by => current_user.id )
+>     end if @company_users
+>     @company_devices.each do|device|
+>       device.update_device_deleted_at!('de-activate')
+>       device_alert_and_group =  DeviceAlertAndGroup.find_by_device_id(device.id)
+>       device_alert_and_group.update_attributes(:deleted_at => Time.now.utc) if !device_alert_and_group.blank?
+>       device_heiarchy = DeviceHeiarchy.find_by_device_id(device.id)
+>       device_heiarchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiarchy.blank?
+>       Log.create(:device_id => device.id,:deleted_by => current_user.id )
+>     end if @company_devices
+>     @company_device_groups.each do|device_group|
+>       device_group.update_device_deleted_at!('de-activate')
+>       Log.create(:device_group_id => device_group.id,:deleted_by => current_user.id )
+>     end if @company_device_groups
+>     @company_gateways.each do|gateway|
+>       gateway.update_gateway_deleted_at!('de-activate')
+>       Log.create(:gateway_id => gateway.id,:deleted_by => current_user.id )
+>     end if @company_gateways
+>     @company_recipients.each do|recipient|
+>       recipient.update_recipient_deleted_at!('de-activate')
+>       Log.create(:recipient_id => recipient.id,:deleted_by => current_user.id )
+>     end if @company_recipients
+>     @company_alert_lists.each do|alert_list|
+>       alert_list = AlertList.find(alert_list.id)
+>       alert_list.update_attributes(:deleted_at => Time.now.utc)
+>       AlertListRecipient.update_all ['deleted_at = ?', Time.now.utc], ['alert_list_id = ?', alert_list.id]
+>       Log.create(:alert_list_id => alert_list.id,:deleted_by => current_user.id)
+>     end if @company_alert_lists
+>     device_heiararchy = DeviceHeiarchy.find_by_company_id(@obj.id)
+>     device_heiararchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiararchy.blank?
+>     Log.create(:company_id => @obj.id,:deleted_by => current_user.id )
+>     @obj.update_company_deleted_at!('de-activate')
+>     #@obj.destroy
+>     @res[:success] = true
+>     @res[:message] = 'Company deleted'
+>     render(:text => @res.to_json, :status => :ok)
+diff -r --exclude=.svn v537/app/controllers/device_groups_controller.rb v516/app/controllers/device_groups_controller.rb
+135,136d134
+<     puts "here:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+<     kkkk
+196,197c194,201
+<       devicegroup.deleted_at = Time.now
+<       if devicegroup.save
+---
+>       device_and_group = DeviceAndGroup.find(:all,:joins => "inner join (select id from device_and_groups where device_group_id  = (#{@obj.device_group_id.to_s})) as cust_dgid on cust_dgid.id = device_and_groups.parent_id") if !@obj.blank?
+>       device_and_group.each do |d_g|
+>         #d_g.destroy
+>       end if !device_and_group.blank?
+>       if devicegroup.update_device_deleted_at!('de-activate')  #devicegroup.destroy
+>         Log.create(:device_group_id => devicegroup.id,:deleted_by => current_user.id )
+>         device_and_group = DeviceAndGroup.find_by_device_group_id(devicegroup.id)
+>         device_and_group.update_device_group_deleted_at!('de-activate') if !device_and_group.blank?
+diff -r --exclude=.svn v537/app/controllers/devices_controller.rb v516/app/controllers/devices_controller.rb
+98c98
+<         where resellers.id = #{current_user.reseller_id} and devices.deleted_at is null")
+---
+>         where resellers.id = #{current_user.reseller_id}")
+104,105c104
+<         inner join gateways on gateways.id = devices.gateway_id and gateways.deleted_at is null
+<         where devices.deleted_at is null")
+---
+>         inner join gateways on gateways.id = devices.gateway_id and gateways.deleted_at is null")
+180c179
+<   def destroy()
+---
+>   def destroy
+182,184c181,191
+<     # ============ Go to device Model -> update_all_dependencies and watch how it is happening.
+<     @obj.deleted_at = Time.now
+<     if @obj.save
+---
+>     @device_alert_and_group =  DeviceAlertAndGroup.find_by_device_id(@obj.id)
+>     @device_alert_and_group_is_a_parent  =  DeviceAlertAndGroup.find_by_parent_id(@device_alert_and_group.id) if @device_alert_and_group
+>     @device_and_group  =  DeviceAndGroup.find_by_device_id(@obj.id)
+>     if @obj.update_device_deleted_at!('de-activate')
+>       #@obj.destroy
+>       @device_heiarchy = DeviceHeiarchy.find_by_device_id(@obj.id)
+>       @device_heiarchy.update_dheiarchy_deleted_at!('de-activate') if !@device_heiarchy.blank?
+>       DeviceAndGroup.update_all ['deleted_at = ?', Time.now.utc], ['device_id = ?', @obj.id]
+>       DeviceAlertAndGroup.update_all ['deleted_at = ?', Time.now.utc], ['device_id = ?', @obj.id]
+>       Log.create(:device_id => @obj.id,:deleted_by => current_user.id)
+>       logger.debug 'Remove from list successfully.'
+216c223
+<             #            error_device_name << "#{device_alert_and_group.name} "
+---
+> #            error_device_name << "#{device_alert_and_group.name} "
+477c484
+<   def update_device_notes
+---
+>   def update_device_notes    
+diff -r --exclude=.svn v537/app/controllers/device_types_controller.rb v516/app/controllers/device_types_controller.rb
+70,95c70,76
+<     devices = Device.find_by_sql("select * from devices where (device_type_id = #{params[:id]})")
+<     unless devices.blank?
+<       @message = "This Unit is assigned in Register Group. First change this unit from Register Group"
+<       @res[:success] = false
+<       @res[:message] = @message
+<       render(:text => @res.to_json, :status => :unprocessable_entity)
+<     else
+<       @device_type = DeviceType.find(params[:id])
+<       begin
+<         @device_type.transaction do
+<           @device_type.deleted_at = Time.now.utc
+<           @device_type.save
+<         end
+<         @res[:success] = true
+<         @res[:message] = "Device Type deactivated successfully."
+<         @res[:data] = @unit
+<         render(:text => @res.to_json, :status => :created)
+<       rescue ActiveRecord::ActiveRecordError => invalid
+<         error_msg = []
+<         invalid.record.errors.each{|attr, msg| error_msg << (attr.to_s.humanize != "Base" ? "#{attr.to_s.humanize} #{msg}" : "#{msg.to_s.humanize}")}
+<         @message = "#{error_msg.join("\n")}"
+<         @res[:success] = false
+<         @res[:message] = @message
+<         render(:text => @res.to_json, :status => :unprocessable_entity)
+<       end
+<     end
+---
+>     @obj = DeviceType.find(params[:id])
+>     @obj.update_device_type_deleted_at!('de-activate')
+>     Log.create(:device_type_id => @obj.id,:deleted_by => current_user.id)
+>     #@obj.destroy
+>     @res[:success] = true
+>     @res[:message] = 'Record deleted.'
+>     render(:text => @res.to_json, :status => :ok)
+97d77
+<   
+diff -r --exclude=.svn v537/app/controllers/gateways_controller.rb v516/app/controllers/gateways_controller.rb
+91,116c91,98
+<   def destroy    
+<     devices = Device.find_by_sql("select * from devices where (gateway_id = #{params[:id]})")
+<     unless devices.blank?
+<       @message = "This Unit is assigned in Register Group. First change this unit from Register Group"
+<       @res[:success] = false
+<       @res[:message] = @message
+<       render(:text => @res.to_json, :status => :unprocessable_entity)
+<     else
+<       @gateway = Gateway.find(params[:id])
+<       begin
+<         @gateway.transaction do
+<           @gateway.update_attributes!(:deleted_at => Time.now.utc)
+<         end
+<         @res[:success] = true
+<         @res[:message] = "Gateway deactivated successfully."
+<         @res[:data] = @unit
+<         render(:text => @res.to_json, :status => :created)
+<       rescue ActiveRecord::ActiveRecordError => invalid
+<         error_msg = []
+<         invalid.record.errors.each{|attr, msg| error_msg << (attr.to_s.humanize != "Base" ? "#{attr.to_s.humanize} #{msg}" : "#{msg.to_s.humanize}")}
+<         @message = "#{error_msg.join("\n")}"
+<         @res[:success] = false
+<         @res[:message] = @message
+<         render(:text => @res.to_json, :status => :unprocessable_entity)
+<       end
+<     end
+---
+>   def destroy
+>     @obj = Gateway.find(params[:id])
+>     @obj.update_gateway_deleted_at!('de-activate')
+>     Log.create(:gateway_id => @obj.id,:deleted_by => current_user.id )
+>     #@obj.destroy
+>     @res[:success] = true
+>     @res[:message] = 'Record deleted.'
+>     render(:text => @res.to_json, :status => :ok)
+118,119d99
+< 
+<   
+diff -r --exclude=.svn v537/app/controllers/modbus_registers_controller.rb v516/app/controllers/modbus_registers_controller.rb
+10,19c10
+<     elsif params[:via] == "reporting-form"
+<       @obj = RegisterAndGroup.find_by_sql("select register_and_groups.id, modbus_registers.id as rid, modbus_registers.tag, register_groups.id as rgid from register_and_groups
+<         inner join modbus_registers on modbus_registers.id = register_and_groups.register_id and modbus_registers.deleted_at is null
+<         inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.deleted_at is null and register_and_groups.register_group_id is not null) as cust_rag on cust_rag.id = register_and_groups.parent_id
+<         inner join register_groups on register_groups.id = cust_rag.register_group_id and register_groups.deleted_at is null
+<         where register_and_groups.deleted_at is null
+<         group by register_and_groups.id")
+<       @obj << {:id => -1, :rid => -1, :tag => " ------- All ------- ", :rgid => nil} unless @obj.blank?
+<       @res[:metaData][:fields] = ["id", "rid", "tag", "rgid"]
+<     elsif params[:via_form_component] == "from_component"
+---
+>     elsif !params[:via_form_component].blank? && params[:via_form_component] == "from_component"
+21,24c12,15
+<         inner join register_and_groups on register_and_groups.register_id = modbus_registers.id and register_and_groups.deleted_at IS NULL
+<         inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.deleted_at IS NULL and register_and_groups.register_group_id IS NOT NULL) as cust_rag on cust_rag.id = register_and_groups.parent_id
+<         inner join register_groups on register_groups.id = cust_rag.register_group_id and register_groups.deleted_at IS NULL
+<         where modbus_registers.deleted_at IS NULL group by modbus_registers.id")
+---
+>       inner join register_and_groups on register_and_groups.register_id = modbus_registers.id and register_and_groups.deleted_at IS NULL
+>       inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.deleted_at IS NULL and register_and_groups.register_group_id IS NOT NULL) as cust_rag on cust_rag.id = register_and_groups.parent_id
+>       inner join register_groups on register_groups.id = cust_rag.register_group_id and register_groups.deleted_at IS NULL
+>       where modbus_registers.deleted_at IS NULL group by modbus_registers.id")
+29,32c20,21
+<     unless params[:via] == "reporting-form"
+<       @res[:metaData][:fields] = ModbusRegister.extjs_record[:fields]
+<       @res[:metaData][:fields].concat(["rgid", "datname"])
+<     end
+---
+> 		@res[:metaData][:fields] = ModbusRegister.extjs_record[:fields]
+>     @res[:metaData][:fields].concat(["rgid", "datname"])
+61c50
+<   # POST /modbus_registers.json
+---
+> 	# POST /modbus_registers.json
+93,94c82
+<   # DELETE /modbus_registers.json
+< 
+---
+> 	# DELETE /modbus_registers.json
+97,107c85,91
+<     # ============ Go to device Model -> update_all_dependencies and watch how it is happening.
+<     @obj.deleted_at = Time.now
+<     if @obj.save
+<       @res[:success] = true
+<       @res[:message] = 'Successfully Removed.'
+<       render(:text => @res.to_json, :status => :ok)
+<     else
+<       #logger.error 'Unable to remove device from list.An alert is assigned to this device.'
+<       @res[:success] = false
+<       @res[:message] = "Unable to remove Register."
+<       render(:text => @res.to_json, :status => :ok)
+---
+>     @obj.update_register_deleted_at!('de-activate')
+>     Log.create(:modbus_register_id => @obj.id,:deleted_by => current_user.id )
+> 
+>     register_and_group = RegisterAndGroup.find(:all, :conditions => ["register_id =?",params[:id]])
+>     register_and_group.each do |rag|
+>       rag.deleted_at = Time.now
+>       rag.save
+108a93,97
+> 
+>     #@obj.destroy
+>     @res[:success] = true
+>     @res[:message] = 'Record deleted.'
+>     render(:text => @res.to_json, :status => :ok)
+112,113c101
+< #    @register_and_groups = RegisterAndGroup.find_by_sql("select register_and_groups.id, register_and_groups.name, cust.register_group_id, register_and_groups.parent_id, modbus_registers.units from register_and_groups inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.register_group_id is not null) as cust on cust.id = register_and_groups.parent_id inner join modbus_registers on modbus_registers.id = register_and_groups.register_id where register_and_groups.deleted_at is null group by register_and_groups.id order by register_and_groups.id asc")
+<     @register_and_groups = RegisterAndGroup.find_by_sql("select register_and_groups.id, cust.register_group_id, register_and_groups.parent_id, modbus_registers.units from register_and_groups inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.register_group_id is not null) as cust on cust.id = register_and_groups.parent_id inner join modbus_registers on modbus_registers.id = register_and_groups.register_id where register_and_groups.deleted_at is null group by register_and_groups.id order by register_and_groups.id asc")
+---
+>     @register_and_groups = RegisterAndGroup.find_by_sql("select register_and_groups.id, register_and_groups.name, cust.register_group_id, register_and_groups.parent_id, modbus_registers.units from register_and_groups inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.register_group_id is not null) as cust on cust.id = register_and_groups.parent_id inner join modbus_registers on modbus_registers.id = register_and_groups.register_id where register_and_groups.deleted_at is null group by register_and_groups.id order by register_and_groups.id asc")
+diff -r --exclude=.svn v537/app/controllers/polls_controller.rb v516/app/controllers/polls_controller.rb
+12,13c12
+<         @obj = Poll.find_by_sql("select companies.name as cname, device_groups.name as dgname, devices.name as dname, device_types.id as dtId, device_groups.id as dgId, devices.id as dId,
+<         polls.`id` as pid, polls.`polling_type_id`, polls.`units`, polls.`offset`, polls.`description`, polls.`reg_count`, polls.`min_value`, polls.`max_value`, polls.`created_at`, polls.`updated_at`, polls.`deleted_at`, polls.`active`, polls.`company_id`, polls.`schedule_name`, polls.`polling_type`, polls.`data_limit`, polls.`interval_time`, polls.`schedule_time` from polls
+---
+>         @obj = Poll.find_by_sql("select companies.name as cname, device_groups.name as dgname, devices.name as dname, device_types.id as dtId, device_groups.id as dgId, devices.id as dId, polls.* from polls
+24,25c23
+<         @obj = Poll.find_by_sql("select companies.name as cname, device_groups.name as dgname, devices.name as dname, device_types.id as dtId, device_groups.id as dgId, devices.id as dId,
+<         polls.`id` as pid, polls.`polling_type_id`, polls.`units`, polls.`offset`, polls.`description`, polls.`reg_count`, polls.`min_value`, polls.`max_value`, polls.`created_at`, polls.`updated_at`, polls.`deleted_at`, polls.`active`, polls.`company_id`, polls.`schedule_name`, polls.`polling_type`, polls.`data_limit`, polls.`interval_time`, polls.`schedule_time` from polls
+---
+>         @obj = Poll.find_by_sql("select companies.name as cname, device_groups.name as dgname, devices.name as dname, device_types.id as dtId, device_groups.id as dgId, devices.id as dId, polls.* from polls
+diff -r --exclude=.svn v537/app/controllers/register_groups_controller.rb v516/app/controllers/register_groups_controller.rb
+135d134
+<       puts "inside Registers::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+149d147
+<       puts "inside Registers:::Groups:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+151,153c149,157
+<       registergroup.deleted_at = Time.now
+<       #      register_group_and_poll = RegisterGroupAndPolling.find(:all,:joins => "inner join (select id from register_group_and_pollings where register_group_id = (#{registergroup.id.to_s})) as cust_randgp on cust_randgp.id = register_group_and_pollings.parent_id")
+<       if !registergroup.blank? and registergroup.save
+---
+>       register_group_and_poll = RegisterGroupAndPolling.find(:all,:joins => "inner join (select id from register_group_and_pollings where register_group_id = (#{registergroup.id.to_s})) as cust_randgp on cust_randgp.id = register_group_and_pollings.parent_id")
+>       if register_group_and_poll.blank?
+>         registergroup.update_register_group_deleted_at!('de-activate')
+>         Log.create(:register_group_id => registergroup.id,:deleted_by => current_user.id )
+>         register_and_group = RegisterAndGroup.find_by_register_group_id(registergroup.id)
+>         register_and_group.update_register_and_group_deleted_at!('de-activate') if !register_and_group.blank?
+>         register_group_and_polling = RegisterGroupAndPolling.find_by_register_group_id(registergroup.id)
+>         register_group_and_polling.update_register_and_group_polling_deleted_at!('de-activate') if !register_group_and_polling.blank?
+>         #registergroup.destroy
+diff -r --exclude=.svn v537/app/controllers/reportings_controller.rb v516/app/controllers/reportings_controller.rb
+8,9c8,9
+<       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reportings
+<       left join reporting_devices on reporting_devices.reporting_id = reportings.id and reporting_devices.deleted_at is null
+---
+>       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reporting_devices
+>       inner join reportings on reportings.id = reporting_devices.reporting_id and reportings.deleted_at is null
+23c23
+<       where reportings.deleted_at is null and companies.id = #{current_user.company_id}
+---
+>       where companies.id = #{current_user.company_id}
+26,27c26,27
+<       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reportings
+<       left join reporting_devices on reporting_devices.reporting_id = reportings.id and reporting_devices.deleted_at is null
+---
+>       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reporting_devices
+>       inner join reportings on reportings.id = reporting_devices.reporting_id and reportings.deleted_at is null
+41c41
+<       where reportings.deleted_at is null and resellers.id = #{current_user.reseller_id}
+---
+>       where resellers.id = #{current_user.reseller_id}
+44,45c44,45
+<       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reportings
+<       left join reporting_devices on reporting_devices.reporting_id = reportings.id and reporting_devices.deleted_at is null
+---
+>       @obj = Reporting.find_by_sql("select resellers.name as resname, companies.name as cname, device_types.name as dtname, devices.name as dname, register_groups.name rgname, modbus_registers.tag as rname, device_groups.name as dgname, reporting_devices.id as rdid, device_groups.id as dgid, device_types.id as dtid, devices.id as did, register_groups.id as rgid, modbus_registers.id as rid, companies.id as cid, resellers.id as resid, users.id as uid, reportings.* from reporting_devices
+>       inner join reportings on reportings.id = reporting_devices.reporting_id and reportings.deleted_at is null
+59d58
+<       where reportings.deleted_at is null
+100,120c99,120
+<     @reporting = Reporting.find(params[:id])
+<     ids = @reporting.reporting_devices.collect {|reporting_device|
+<       reporting_device.id
+<     } unless @reporting.reporting_devices.blank?
+<     
+<     begin
+<       @reporting.transaction do
+<         @reporting.update_attributes!({:name => params[:name], :description => params[:description]})
+<         params[:reporting_device_data].each do |r|
+<           unless r[:device_group_id].blank?
+<             @reporting.reporting_devices.create!({
+<                 :device_group_id => r[:device_group_id],
+<                 :device_type_id => r[:device_type_id],
+<                 :device_id => r[:device_id],
+<                 :register_group_id => r[:register_group_id],
+<                 :register_id => r[:register_id]
+<               })
+<           end
+<         end unless params[:reporting_device_data].blank?
+<         ReportingDevice.delete_all("id in (#{ids.join(",")})") unless ids.blank?
+<       end
+---
+>     @obj = Reporting.find(params[:id])
+>     @reporting_devices = ReportingDevice.find(:all, :conditions => ["reporting_id = #{@obj.id}"])
+> 
+>     @reporting_devices.each do |rep_dev|
+>       rep_dev.destroy
+>     end if @reporting_devices
+> 
+>     @obj.name = params[:name] if params[:name]
+>     @obj.description = params[:description] if params[:description]
+>     if @obj.save
+>       params[:reporting_device_data].each do |r|
+>         if !r[:device_group_id].blank? || !r[:register_group_id].blank? || !r[:device_id].blank? || !r[:register_id].blank? || !r[:device_type_id].blank?
+>           reporting_device = ReportingDevice.new
+>           reporting_device.reporting_id = @obj.id
+>           reporting_device.device_group_id = r[:device_group_id] if r[:device_group_id]
+>           reporting_device.register_group_id = r[:register_group_id] if r[:register_group_id]
+>           reporting_device.device_id = r[:device_id] if r[:device_id]
+>           reporting_device.register_id = r[:register_id] if r[:register_id]
+>           reporting_device.device_type_id = r[:device_type_id] if r[:device_type_id]
+>           reporting_device.save
+>         end
+>       end if params[:reporting_device_data]
+122,123c122,123
+<       @res[:message] = 'Successfully updated.'
+<       @res[:data] = @reporting
+---
+>       @res[:message] = 'Successfully created.'
+>       @res[:data] = @obj
+125,128c125
+<     rescue ActiveRecord::ActiveRecordError => invalid
+<       error_msg = []
+<       invalid.record.errors.each{|attr, msg| error_msg << (attr.to_s.humanize != "Base" ? "#{attr.to_s.humanize} #{msg}" : "#{msg.to_s.humanize}")}
+<       @message = "#{error_msg.join("\n")}"
+---
+>     else
+130c127
+<       @res[:message] = @message
+---
+>       @res[:message] = @obj.errors
+132a130
+>     
+156,160c154,182
+<     @obj = ReportingDevice.find_by_sql("select device_groups.name as dgName, cust_dt.name as dtName, reporting_devices.* from reporting_devices
+<       inner join reportings on reportings.id = reporting_devices.reporting_id and reportings.deleted_at is null
+<       left join device_groups on device_groups.id = reporting_devices.device_group_id
+<       left join ((select device_types.id, device_types.name from device_types)union(select -1 as id, ' ------- All ------- ' from device_types)order by id asc) as cust_dt on cust_dt.id = reporting_devices.device_type_id
+<       where reporting_devices.deleted_at is null")
+---
+>     @obj = ReportingDevice.all
+>     
+>     @obj = ReportingDevice.find_by_sql("
+>           SELECT
+>           reportings.id as reportingId,
+>           device_groups.id as device_groupId,
+>           device_types.id as device_typeId,
+>           devices.id as deviceId,
+>           register_groups.id as register_groupId,
+>           modbus_registers.id as registerId,
+> 
+>           device_groups.name as device_group_name,
+>           device_types.name as device_type_name,
+>           devices.name as device_name,
+>           register_groups.name as register_group_name,
+>           modbus_registers.tag as modbus_register_tag,
+> 
+>           reporting_devices.*
+>           FROM reporting_devices
+> 
+>           inner join reportings on reportings.id = reporting_devices.reporting_id
+>           left join device_groups on device_groups.id = reporting_devices.device_group_id
+>           left join device_types on device_types.id = reporting_devices.device_type_id
+>           left join devices on devices.id = reporting_devices.device_id
+>           left join register_groups on register_groups.id = reporting_devices.register_group_id
+>           left join modbus_registers on modbus_registers.id = reporting_devices.register_id
+>       ")
+>     
+>     
+162c184,185
+<     @res[:metaData][:fields].concat(["dgName", "dtName"])
+---
+>     @res[:metaData][:fields].concat(["reportingId","device_groupId","device_typeId","deviceId","register_groupId","registerId","device_group_name","device_type_name","device_name", "register_group_name", "modbus_register_tag"])
+> 
+167,178c190,191
+<     respond_with(@res, :status => :ok)
+<     #render(:text => @res.to_json, :status => :ok)
+<   end
+< 
+<   def get_registers
+<     @registers = ActiveRecord::Base.connection.select_sp("CALL GetRegistersForReporting();")
+<     @res[:metaData][:fields] = [{:name => "id", :type => "int"}, {:name => "reporting_device_id", :type => "int"}, {:name => "reporting_id", :type => "int"}, {:name => "device_group_id", :type => "int"}, {:name => "device_type_id", :type => "int"}, {:name => "register_group_id", :type => "int"}, {:name => "register_id", :type => "int"}, {:name => "tag", :type => "string"}, {:name => "name", :type => "string"}, {:name => "dtname", :type => "string"}]
+<     @res[:success] = true
+<     @res[:message] = "Returned data"
+<     @res[:total] = @registers.count
+<     @res[:data] = @registers
+<     respond_with(@res, :status => :ok)
+---
+>     #		respond_with(@res, :status => :ok)
+>     render(:text => @res.to_json, :status => :ok)
+181c194
+< end
+\ No newline at end of file
+---
+> end
+diff -r --exclude=.svn v537/app/controllers/resellers_controller.rb v516/app/controllers/resellers_controller.rb
+93,108c93,172
+<     if current_user.company_id
+<       @company = Company.find(current_user.company_id)
+<       @resId = @company.reseller_id
+<     else
+<       @resId = current_user.reseller_id
+<     end
+<     @obj.deleted_at = Time.now
+<     if @resId == params[:id].to_i
+<       @res[:success] = false
+<       @message = "You can't delete reseller. You are belongs to this reseller."
+<       @res[:message] = @message
+<       render :text => @res.to_json, :status => :unprocessable_entity
+<     elsif(@obj.save)
+<       @res[:success] = true
+<       @res[:message] = 'Deleted'
+<       render(:text => @res.to_json, :status => :ok)
+---
+>     @reseller_users = @obj.users
+>     @reseller_companies = @obj.companies   
+>     #@company_device_groups = Company.device_groups
+> 
+> 
+> 
+>     @reseller_users.each do|user|
+>       user.update_user_deleted_at!('de-activate')
+>       user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+>       user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>       Log.create(:user_id => user.id,:deleted_by => current_user.id )
+>     end if @reseller_users
+> 
+>     @reseller_companies.each do|company|
+>       company_users = company.users
+>       company_devices = company.devices
+>       company_device_groups = company.device_groups
+>       company_user_groups = company.user_groups
+>       company_recipients = company.recipients
+>       company_gateways = company.gateways
+>       company_alert_lists = company.alert_lists
+> 
+> 
+>       company_user_groups.each do|user_group|
+>         user_group.update_user_deleted_at!('de-activate')
+>         user_and_its_group = UserAndItsGroups.find_by_user_group_id(user_group.id)
+>         user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>         Log.create(:user_group_id => user_group.id,:deleted_by => current_user.id)
+>       end if company_user_groups
+> 
+>       company_users.each do|user|
+>         user.update_user_deleted_at!('de-activate')
+>         user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+>         user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>         Log.create(:user_id => user.id,:deleted_by => current_user.id )
+>       end if company_users
+>       
+>       company_devices.each do|device|
+>         device.update_device_deleted_at!('de-activate')
+>         device_alert_and_group =  DeviceAlertAndGroup.find_by_device_id(device.id)
+>         device_alert_and_group.update_attributes(:deleted_at => Time.now.utc) if !device_alert_and_group.blank?
+>         device_heiarchy = DeviceHeiarchy.find_by_device_id(device.id)
+>         device_heiarchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiarchy.blank?
+>         Log.create(:device_id => device.id,:deleted_by => current_user.id )
+>       end if company_devices
+> 
+>       company_device_groups.each do|device_group|
+>         device_group.update_device_deleted_at!('de-activate')
+>         Log.create(:device_group_id => device_group.id,:deleted_by => current_user.id )
+>       end if company_device_groups
+> 
+>       device_heiararchy = DeviceHeiarchy.find_by_company_id(company.id)
+>       device_heiararchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiararchy.blank?
+>       company.update_company_deleted_at!('de-activate')
+>       Log.create(:company_id => company.id,:deleted_by => current_user.id )
+> 
+> 
+>       company_recipients.each do|recipient|
+>         recipient.update_recipient_deleted_at!('de-activate')
+>         Log.create(:recipient_id => recipient.id,:deleted_by => current_user.id )
+>       end if company_recipients
+> 
+>       company_gateways.each do|gateway|
+>         gateway.update_gateway_deleted_at!('de-activate')
+>         Log.create(:gateway_id => gateway.id,:deleted_by => current_user.id )
+>       end if company_gateways
+> 
+>       company_alert_lists.each do|alert_list|
+>         alert_list = AlertList.find(alert_list.id)
+>         alert_list.update_attributes(:deleted_at => Time.now.utc)
+>         AlertListRecipient.update_all ['deleted_at = ?', Time.now.utc], ['alert_list_id = ?', alert_list.id]
+>         Log.create(:alert_list_id => alert_list.id,:deleted_by => current_user.id)
+>       end if company_alert_lists
+> 
+>     end if @reseller_companies
+> 
+>     device_reseller_h = DeviceHeiarchy.find_by_reseller_id(@obj.id)
+>     device_reseller_h.update_dheiarchy_deleted_at!('de-activate') if !device_reseller_h.blank?
+>     if current_user.role.name == 'admin_reseller'
+>       Log.create(:reseller_id => @obj.id,:deleted_by => current_user.id, :reseller_admin_id => current_user.id )
+110,113c174
+<       @res[:success] = false
+<       @message = "Unable to delete the Reseller."
+<       @res[:message] = @message
+<       render :text => @res.to_json, :status => :unprocessable_entity
+---
+>       Log.create(:reseller_id => @obj.id,:deleted_by => current_user.id )
+114a176
+>     @obj.update_reseller_deleted_at!('de-activate')
+116,205c178,182
+<     #    @reseller_users = @obj.users
+<     #    @reseller_companies = @obj.companies
+<     #    #@company_device_groups = Company.device_groups
+<     #
+<     #
+<     #
+<     #    @reseller_users.each do|user|
+<     #      user.update_user_deleted_at!('de-activate')
+<     #      user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+<     #      user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<     #      Log.create(:user_id => user.id,:deleted_by => current_user.id )
+<     #    end if @reseller_users
+<     #
+<     #    @reseller_companies.each do|company|
+<     #      company_users = company.users
+<     #      company_devices = company.devices
+<     #      company_device_groups = company.device_groups
+<     #      company_user_groups = company.user_groups
+<     #      company_recipients = company.recipients
+<     #      company_gateways = company.gateways
+<     #      company_alert_lists = company.alert_lists
+<     #
+<     #
+<     #      company_user_groups.each do|user_group|
+<     #        user_group.update_user_deleted_at!('de-activate')
+<     #        user_and_its_group = UserAndItsGroups.find_by_user_group_id(user_group.id)
+<     #        user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<     #        Log.create(:user_group_id => user_group.id,:deleted_by => current_user.id)
+<     #      end if company_user_groups
+<     #
+<     #      company_users.each do|user|
+<     #        user.update_user_deleted_at!('de-activate')
+<     #        user_and_its_group = UserAndItsGroups.find_by_user_id(user.id)
+<     #        user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<     #        Log.create(:user_id => user.id,:deleted_by => current_user.id )
+<     #      end if company_users
+<     #
+<     #      company_devices.each do|device|
+<     #        device.update_device_deleted_at!('de-activate')
+<     #        device_alert_and_group =  DeviceAlertAndGroup.find_by_device_id(device.id)
+<     #        device_alert_and_group.update_attributes(:deleted_at => Time.now.utc) if !device_alert_and_group.blank?
+<     #        device_heiarchy = DeviceHeiarchy.find_by_device_id(device.id)
+<     #        device_heiarchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiarchy.blank?
+<     #        Log.create(:device_id => device.id,:deleted_by => current_user.id )
+<     #      end if company_devices
+<     #
+<     #      company_device_groups.each do|device_group|
+<     #        device_group.update_device_deleted_at!('de-activate')
+<     #        Log.create(:device_group_id => device_group.id,:deleted_by => current_user.id )
+<     #      end if company_device_groups
+<     #
+<     #      device_heiararchy = DeviceHeiarchy.find_by_company_id(company.id)
+<     #      device_heiararchy.update_dheiarchy_deleted_at!('de-activate') if !device_heiararchy.blank?
+<     #      company.update_company_deleted_at!('de-activate')
+<     #      Log.create(:company_id => company.id,:deleted_by => current_user.id )
+<     #
+<     #
+<     #      company_recipients.each do|recipient|
+<     #        recipient.update_recipient_deleted_at!('de-activate')
+<     #        Log.create(:recipient_id => recipient.id,:deleted_by => current_user.id )
+<     #      end if company_recipients
+<     #
+<     #      company_gateways.each do|gateway|
+<     #        gateway.update_gateway_deleted_at!('de-activate')
+<     #        Log.create(:gateway_id => gateway.id,:deleted_by => current_user.id )
+<     #      end if company_gateways
+<     #
+<     #      company_alert_lists.each do|alert_list|
+<     #        alert_list = AlertList.find(alert_list.id)
+<     #        alert_list.update_attributes(:deleted_at => Time.now.utc)
+<     #        AlertListRecipient.update_all ['deleted_at = ?', Time.now.utc], ['alert_list_id = ?', alert_list.id]
+<     #        Log.create(:alert_list_id => alert_list.id,:deleted_by => current_user.id)
+<     #      end if company_alert_lists
+<     #
+<     #    end if @reseller_companies
+<     #
+<     #    device_reseller_h = DeviceHeiarchy.find_by_reseller_id(@obj.id)
+<     #    device_reseller_h.update_dheiarchy_deleted_at!('de-activate') if !device_reseller_h.blank?
+<     #    if current_user.role.name == 'admin_reseller'
+<     #      Log.create(:reseller_id => @obj.id,:deleted_by => current_user.id, :reseller_admin_id => current_user.id )
+<     #    else
+<     #      Log.create(:reseller_id => @obj.id,:deleted_by => current_user.id )
+<     #    end
+<     #    @obj.update_reseller_deleted_at!('de-activate')
+<     #
+<     #
+<     #    #@obj.destroy
+<     #    @res[:success] = true
+<     #    @res[:message] = 'Record deleted.'
+<     #    render(:text => @res.to_json, :status => :ok)
+---
+>     
+>     #@obj.destroy
+>     @res[:success] = true
+>     @res[:message] = 'Record deleted.'
+>     render(:text => @res.to_json, :status => :ok)
+diff -r --exclude=.svn v537/app/controllers/units_controller.rb v516/app/controllers/units_controller.rb
+56,58c56,68
+<     register_groups = RegisterGroup.find_by_sql("select * from register_groups where (left_axis_unit_id = #{params[:id]} or right_axis_unit_id = #{params[:id]})")
+<     unless register_groups.blank?
+<       @message = "This Unit is assigned in Register Group. First change this unit from Register Group"
+---
+>     @unit = Unit.find(params[:id])
+>     begin
+>       @unit.transaction do
+>         @unit.update_attributes!(:deleted_at => Time.now.utc)
+>       end
+>       @res[:success] = true
+>       @res[:message] = "Unit deactivated successfully."
+>       @res[:data] = @unit
+>       render(:text => @res.to_json, :status => :created)
+>     rescue ActiveRecord::ActiveRecordError => invalid
+>       error_msg = []
+>       invalid.record.errors.each{|attr, msg| error_msg << (attr.to_s.humanize != "Base" ? "#{attr.to_s.humanize} #{msg}" : "#{msg.to_s.humanize}")}
+>       @message = "#{error_msg.join("\n")}"
+62,79d71
+<     else
+<       @unit = Unit.find(params[:id])
+<       begin
+<         @unit.transaction do
+<           @unit.update_attributes!(:deleted_at => Time.now.utc)
+<         end
+<         @res[:success] = true
+<         @res[:message] = "Unit deactivated successfully."
+<         @res[:data] = @unit
+<         render(:text => @res.to_json, :status => :created)
+<       rescue ActiveRecord::ActiveRecordError => invalid
+<         error_msg = []
+<         invalid.record.errors.each{|attr, msg| error_msg << (attr.to_s.humanize != "Base" ? "#{attr.to_s.humanize} #{msg}" : "#{msg.to_s.humanize}")}
+<         @message = "#{error_msg.join("\n")}"
+<         @res[:success] = false
+<         @res[:message] = @message
+<         render(:text => @res.to_json, :status => :unprocessable_entity)
+<       end
+81d72
+<     
+diff -r --exclude=.svn v537/app/controllers/user_groups_controller.rb v516/app/controllers/user_groups_controller.rb
+226a227
+> 
+227a229
+> 
+243,249c245,249
+<       usergroup.deleted_at = Time.now
+<       if usergroup.save
+<         #        usergroup.destroy
+<         #        user_and_its_group = UserAndItsGroups.find_by_user_group_id(usergroup.id)
+<         #        user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+<         #        UserAndDeviceGroup.update_all ['deleted_at = ?', Time.now.utc], ['user_group_id = ?', usergroup.id]
+<         #        Log.create(:user_group_id => usergroup.id,:deleted_by => current_user.id)
+---
+>       if usergroup.update_user_deleted_at!('de-activate')     #usergroup.destroy
+>         user_and_its_group = UserAndItsGroups.find_by_user_group_id(usergroup.id)
+>         user_and_its_group.update_user_deleted_at!('de-activate') if !user_and_its_group.blank?
+>         UserAndDeviceGroup.update_all ['deleted_at = ?', Time.now.utc], ['user_group_id = ?', usergroup.id]
+>         Log.create(:user_group_id => usergroup.id,:deleted_by => current_user.id)
+diff -r --exclude=.svn v537/app/controllers/users_controller.rb v516/app/controllers/users_controller.rb
+166c166
+< 
+---
+>         
+168c168
+<     user[:password_confirmation] = params[:password_confirmation] unless params[:password_confirmation].blank?
+---
+>     user[:password_confirmation] = params[:password_confirmation] unless params[:password_confirmation].blank?   
+250,252c250,255
+<     @obj = User.find(params[:id])
+<     @obj.deleted_at = Time.now
+<     if(current_user.id != params[:id].to_i && @obj.save)
+---
+>     @obj = User.find(params[:id])    
+>     if(current_user.id != params[:id].to_i)
+>       @obj.update_user_deleted_at!('de-activate')
+>       UserAndItsGroups.update_all ['deleted_at = ?', Time.now.utc], ['user_id = ?', @obj.id]
+>       # UserAndItsGroups.update_all "deleted_at = '#{Time.now.utc}'" , "user_id = #{@obj.id}"
+>       Log.create(:user_id => @obj.id,:deleted_by => current_user.id )
+257,261d259
+<     elsif(current_user.id == params[:id].to_i)
+<       @res[:success] = false
+<       @message = "You can't delete yourself. You are currently logged in as current user."
+<       @res[:message] = @message
+<       render :text => @res.to_json, :status => :unprocessable_entity
+diff -r --exclude=.svn v537/app/models/company.rb v516/app/models/company.rb
+36,41c36,41
+<     dh = DeviceHeiarchy.where(["reseller_id = ? and deleted_at is null and parent_id is null", self.reseller_id]).first
+<     unless dh.blank?
+<       device_heiarchies.create!({:parent_id => dh.id})
+<     else
+<       errors.add(:base, "can't add dependencies on Device Heiarchy, because respective parent is not present on Device Heiarchy.")
+<     end
+---
+>         dh = DeviceHeiarchy.where(["reseller_id = ? and deleted_at is null and parent_id is null", self.reseller_id]).first
+>         unless dh.blank?
+>           device_heiarchies.create!({:parent_id => dh.id})
+>         else
+>           errors.add(:base, "can't add dependencies on Device Heiarchy, because respective parent is not present on Device Heiarchy.")
+>         end
+73,149d72
+< 
+< 
+<     unless self.deleted_at.blank?
+< 
+<       users = User.where(["company_id = ?", self.id]).all
+<       unless users.blank?
+<         users.each do |user|
+<           user.deleted_at = Time.now
+<           user.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       
+<       gateways = Gateway.where(["company_id = ?", self.id]).all
+<       unless gateways.blank?
+<         gateways.each do |gateway|
+<           gateway.deleted_at = Time.now
+<           gateway.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+< 
+<       devices = Device.where(["company_id = ?", self.id]).all
+<       unless devices.blank?
+<         devices.each do |device|
+<           device.deleted_at = Time.now
+<           device.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       #
+<       devicegroups = DeviceGroup.where(["company_id = ?", self.id]).all
+<       unless devicegroups.blank?
+<         devicegroups.each do |devicegroup|
+<           devicegroup.deleted_at = Time.now
+<           devicegroup.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       #
+<       usergroups = UserGroup.where(["company_id = ?", self.id]).all
+<       unless usergroups.blank?
+<         usergroups.each do |usergroup|
+<           usergroup.deleted_at = Time.now
+<           usergroup.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       #
+<       polls = Poll.where(["company_id = ?", self.id]).all
+<       unless polls.blank?
+<         polls.each do |poll|
+<           poll.deleted_at = Time.now
+<           poll.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       #
+<       alert_lists = AlertList.where(["company_id = ?", self.id]).all
+<       unless alert_lists.blank?
+<         alert_lists.each do |alert_list|
+<           alert_list.deleted_at = Time.now
+<           alert_list.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       #
+<       recipients = Recipient.where(["company_id = ?", self.id]).all
+<       unless recipients.blank?
+<         recipients.each do |recipient|
+<           recipient.deleted_at = Time.now
+<           recipient.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<       
+<       device_heiarchy = DeviceHeiarchy.where(["company_id = ?", self.id]).first
+< 
+<       unless device_heiarchy.blank?
+<         device_heiarchy.deleted_at = Time.now
+<         device_heiarchy.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<     end
+< 
+diff -r --exclude=.svn v537/app/models/device_group.rb v516/app/models/device_group.rb
+64a65,70
+>     #    dag = device_and_groups.first
+>     #    unless dag.blank?
+>     #      dag.update_attributes!({:name => name})
+>     #    else
+>     #      errors.add(:base, "Can't update Device Group, because this Device Group is not present on Device and Group.")
+>     #    end
+66,89c72
+<     if !self.deleted_at.blank?
+<       device_and_groups = DeviceAndGroup.where(["device_group_id = ?", self.id]).first
+<       unless device_and_groups.blank?
+<         device_and_groups.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       devicegroupheiarchy = DevicegroupHeiarchy.where(["device_group_id = ?", self.id]).first
+<       unless devicegroupheiarchy.blank?
+<         devicegroupheiarchy.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       device_groups_and_polling_schedule = DeviceGroupsAndPollingSchedule.where(["device_group_id = ?", self.id]).first
+<       unless device_groups_and_polling_schedule.blank?
+<         device_groups_and_polling_schedule.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       user_and_device_groups = UserAndDeviceGroup.where(["device_group_id = ?", self.id]).all
+<       unless device_groups_and_polling_schedule.blank?
+<         user_and_device_groups.each do |user_and_device_group|
+<           user_and_device_group.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+< 
+<     end
+---
+>     #UserAndDeviceGroup.update_all(["name = ?", name], ["device_group_id = ? and deleted_at is null and user_group_id is null", id])
+diff -r --exclude=.svn v537/app/models/device.rb v516/app/models/device.rb
+46c46
+<   def update_all_dependencies()
+---
+>   def update_all_dependencies
+69,105d68
+< 
+<     # ========= Start deactivating device and all its dependencies. ============================= #
+<     if !self.deleted_at.blank?
+<       device_alert_and_group = DeviceAlertAndGroup.where(["device_id = ?", self.id]).first
+<       unless device_alert_and_group.blank?
+<         device_alert_and_group.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       device_heiarchy = DeviceHeiarchy.where(["device_id = ?", self.id]).first
+<       unless device_heiarchy.blank?
+<         device_heiarchy.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       device_structure = Devicestructure.where(["device_id = ?", self.id]).first
+<       unless device_structure.blank?
+<         device_structure.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       device_and_groups = DeviceAndGroup.where(["device_id = ?", self.id]).all
+<       unless device_and_groups.blank?
+<         device_and_groups.each do |device_and_group|
+<           device_and_group.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+< 
+<       device_group_and_polling_schedules = DeviceGroupsAndPollingSchedule.where(["device_id = ?", self.id]).all
+<       unless device_group_and_polling_schedules.blank?
+<         device_group_and_polling_schedules.each do |device_group_and_polling_schedule|
+<           device_group_and_polling_schedule.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+<     end
+<     # ========= End   deactivating device and all its dependencies. ============================= #
+< 
+<     
+< 
+<     
+diff -r --exclude=.svn v537/app/models/device_type.rb v516/app/models/device_type.rb
+13,14c13
+<   validate :update_all_dependencies, :on => :update
+< 
+---
+>   
+43,58d41
+< 
+<   def update_all_dependencies
+<     # ========= Start deactivating device_type and all its dependencies. ============================= #
+<     if !self.deleted_at.blank?
+<       devicestructure = Devicestructure.where(["device_type_id = ?", self.id]).first
+<       unless devicestructure.blank?
+<         devicestructure.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       rag = RegisterAndGroup.where(["device_type_id = ?", self.id]).first
+<       unless rag.blank?
+<         rag.update_attributes!({:deleted_at => Time.now})
+<       end
+<     end
+<     # ========= End   deactivating device_type and all its dependencies. ============================= #
+<   end
+diff -r --exclude=.svn v537/app/models/modbus_register.rb v516/app/models/modbus_register.rb
+8,17c8,14
+<   validate :update_all_dependencies, :on => :update
+< 
+<   def update_all_dependencies
+<     if !self.deleted_at.blank?
+<       register_and_groups = RegisterAndGroup.where(["register_id = ?", self.id]).all
+<       unless register_and_groups.blank?
+<         register_and_groups.each do |register_and_group|
+<           register_and_group.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end      
+---
+>   #  after_update :update_all_dependencies
+>   
+>   def update_register_deleted_at!(action)
+>     if action == 'de-activate'
+>       self.deleted_at = Time.now.utc
+>     elsif(action == 'activate')
+>       self.deleted_at = nil
+18a16
+>     save(false)
+21c19
+<   #  protected
+---
+>   protected
+diff -r --exclude=.svn v537/app/models/register_group.rb v516/app/models/register_group.rb
+53,60d52
+< 
+<     if !self.deleted_at.blank?
+<       register_and_group = RegisterAndGroup.where(["register_group_id = ?", self.id]).first
+<       unless register_and_group.blank?
+<         register_and_group.update_attributes!({:deleted_at => Time.now})
+<       end
+<     end
+< 
+diff -r --exclude=.svn v537/app/models/reporting_device.rb v516/app/models/reporting_device.rb
+3,14c3,4
+<   belongs_to :reporting, :conditions => "reportings.deleted_at is null"
+< 
+<   validates :device_group_id, :device_type_id, :register_group_id, :presence => true
+< 
+<   before_save :set_register
+< 
+<   protected
+< 
+<   def set_register
+<     self.register_id = "-1" if !self.register_group_id.blank? && self.register_id.blank?
+<   end
+< end
+\ No newline at end of file
+---
+>   belongs_to :reporting
+> end
+diff -r --exclude=.svn v537/app/models/reporting.rb v516/app/models/reporting.rb
+3c3
+<   has_many :reporting_devices, :conditions => "reporting_devices.deleted_at is null"
+---
+>   has_many :reporting_devices
+6c6
+< end
+\ No newline at end of file
+---
+> end
+diff -r --exclude=.svn v537/app/models/reseller.rb v516/app/models/reseller.rb
+14,15c14
+<   validate :update_all_dependencies, :on => :update
+< 
+---
+>   
+32,46d30
+<   def update_all_dependencies
+<     unless self.deleted_at.blank?
+< 
+<       companies = Company.where(["reseller_id = ?", self.id]).all
+<       unless companies.blank?
+<         companies.each do |company|
+<           company.deleted_at = Time.now
+<           company.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+< 
+< 
+<     end
+<   end
+< 
+diff -r --exclude=.svn v537/app/models/user_group.rb v516/app/models/user_group.rb
+10c10
+<   validate :check_user_group_company, :update_all_dependencies, :on => :update
+---
+>   validate :check_user_group_company, :on => :update
+42,56c42,55
+<   def update_all_dependencies
+<     # ========= Start deactivating device and all its dependencies. ============================= #
+<     if !self.deleted_at.blank?
+<       uaig = UserAndItsGroups.where(["user_group_id = ?", self.id]).first
+<       unless uaig.blank?
+<         uaig.update_attributes!({:deleted_at => Time.now})
+<       end
+< 
+<       uadg = UserAndDeviceGroup.where(["user_group_id = ?", self.id]).first
+<       unless uadg.blank?
+<         uadg.update_attributes!({:deleted_at => Time.now})
+<       end
+<     end
+<     # ========= End   deactivating device and all its dependencies. ============================= #
+<   end
+---
+>   #  def update_all_dependencies
+>   #        uaig = user_and_its_groupss.first
+>   #        unless uaig.blank?
+>   #          uaig.update_attributes!({:name => name})
+>   #        else
+>   #          errors.add(:base, "Can't update User Group, because this User Group is not present on User and its Groups.")
+>   #        end
+>   #        uadg = user_and_device_groups.first
+>   #        unless uadg.blank?
+>   #          uadg.update_attributes!({:name => name})
+>   #        else
+>   #          errors.add(:base, "Can't update User Group, because this User Group is not present on User and Device Groups.")
+>   #        end
+>   #  end
+diff -r --exclude=.svn v537/app/models/user.rb v516/app/models/user.rb
+33c33
+<   validate :check_valid_company, :update_all_dependencies, :on => :update
+---
+>   validate :check_valid_company, :on => :update
+35c35
+<   #  after_update :update_all_dependencies
+---
+> #  after_update :update_all_dependencies
+94,106d93
+<     puts "User============================================#{YAML::dump(self)}"
+<     if !self.deleted_at.blank?
+<       puts "Inside User via Company:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;"
+< 
+<       uags = UserAndItsGroups.where(["user_id = ?", self.id]).all
+<       unless uags.blank?
+<         uags.each do |uag|
+<           uag.update_attributes!({:deleted_at => Time.now})
+<         end
+<       end
+< 
+<       
+<     end
+diff -r --exclude=.svn v537/app/views/layouts/amci.html.erb v516/app/views/layouts/amci.html.erb
+53,58d52
+<       /*
+<       Ext.Ajax.on('beforerequest', function(conn, options){
+<         if(options.method === undefined || options.method != 'GET'){
+<           
+<         }
+<       }, this);*/
+63a58,70
+>       // Return new array with duplicate values removed
+>       Array.prototype.unique = function(){
+>         var a = [];
+>         var l = this.length;
+>         for(var i=0; i<l; i++){
+>           for(var j=i+1; j<l; j++){
+>             // If this[i] is found later in the array
+>             if(this[i] === this[j]){j = ++i;}
+>           }
+>           a.push(this[i]);
+>         }
+>         return a;
+>       };
+69c76
+<       };
+---
+>       }
+diff -r --exclude=.svn v537/config/routes.rb v516/config/routes.rb
+154,155d153
+<   match 'get-registers-reporting' => 'reportings#get_registers', :as => 'get_registers_reporting'
+< 
+diff -r --exclude=.svn v537/db/migrate/20110919050119_create_reporting_devices.rb v516/db/migrate/20110919050119_create_reporting_devices.rb
+4,10c4,9
+<       t.integer     :reporting_id
+<       t.integer     :device_group_id
+<       t.integer     :device_type_id
+<       t.string      :device_id
+<       t.string      :register_group_id
+<       t.string      :register_id
+<       t.datetime    :deleted_at
+---
+>       t.integer  :reporting_id
+>       t.integer  :device_group_id
+>       t.integer  :device_type_id
+>       t.integer  :device_id
+>       t.integer  :register_group_id
+>       t.integer  :register_id
+Only in v537/db/migrate: 20111109122602_create_stored_procedure_get_registers_for_reporting.rb
+diff -r --exclude=.svn v537/doc/README_FOR_APP v516/doc/README_FOR_APP
+4c4
+< rails runner 'require("db/migrate/20111109122602_create_stored_procedure_get_registers_for_reporting.rb").first.constantize.up'
+---
+> rails runner 'require("db/migrate/20110919050119_create_reporting_devices.rb").first.constantize.up'
+diff -r --exclude=.svn v537/public/ext-3.3.0/examples/ux/MultiSelect.js v516/public/ext-3.3.0/examples/ux/MultiSelect.js
+271,287c271,272
+<             if(this.valueField == 'rid'){
+<                 var regId = [];
+<                 this.view.store.each(function(rec){
+<                     if(rec.get('rid') == val[i]){
+<                         regId.push(rec.get('id'));
+<                     }
+<                 });
+< 
+<                 for(var j=0; j<regId.length; j++){
+<                     index = this.view.store.indexOfId(regId[j]);
+<                     selections.push(index);
+<                 }
+<             }
+<             else{
+<                 index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+<                 selections.push(index);
+<             }
+---
+>             index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+>             selections.push(index);
+diff -r --exclude=.svn v537/public/extjs/examples/ux/MultiSelect.js v516/public/extjs/examples/ux/MultiSelect.js
+271,287c271,272
+<             if(this.valueField == 'rid'){
+<                 var regId = [];
+<                 this.view.store.each(function(rec){
+<                     if(rec.get('rid') == val[i]){
+<                         regId.push(rec.get('id'));
+<                     }
+<                 });
+< 
+<                 for(var j=0; j<regId.length; j++){
+<                     index = this.view.store.indexOfId(regId[j]);
+<                     selections.push(index);
+<                 }
+<             }
+<             else{
+<                 index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+<                 selections.push(index);
+<             }
+---
+>             index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+>             selections.push(index);
+diff -r --exclude=.svn v537/public/javascripts/app/forms/AddReporting.js v516/public/javascripts/app/forms/AddReporting.js
+60,61c60,61
+<             fieldLabel: 'Reporting Devices',
+<             labelStyle: 'padding:0',
+---
+>             fieldLabel: 'Devices',
+>             labelStyle: 'font-weight:bold;padding:0',
+77d76
+<                     allowBlank: false,
+106c105
+<                                         deviceTypeCombo.clearValue();
+---
+>                                         deviceTypeCombo.setValue("");
+124c123
+<                                         registerCombo.clearValue();
+---
+>                                         registerGroupCombo.clearValue();
+143d141
+<                     allowBlank: false,
+144a143
+>                     mode: "local",
+173,178c172
+<                                             if(record.get("id") != -1){
+<                                                 return [rec.id].isPresent(record.get("device_type_id"), false);
+<                                             }
+<                                             else{
+<                                                 return true;
+<                                             }
+---
+>                                             return [-1, rec.id].isPresent(record.get("device_type_id"), false);
+186,189c180
+<                                                     return arr.isPresent(record.get("device_type_id"), false);
+<                                                 }
+<                                                 else{
+<                                                     return true;
+---
+>                                                  return arr.isPresent(record.get("device_type_id"), false);
+194,198d184
+<                                     if(registerGroupCombo.store.getCount <= 1){
+<                                         registerGroupCombo.store.filterBy(function(record, id){
+<                                             return false;
+<                                         });
+<                                     }
+252d237
+<                     allowBlank: false,
+276d260
+<                                         var arr = [];
+278,289c262
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(values.isPresent(record.get("rgid"), false) && !arr.isPresent(record.get("rid"), false)){
+<                                                     arr.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+---
+>                                             return values.isPresent(record.get("rgid"), false);
+293,299d265
+<                                         var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+i);
+<                                         var rg = [], arry = [];
+<                                         registerGroupCombo.store.each(function(rec){
+<                                             if(rec.get("id") != -1){
+<                                                 rg.push(rec.get("id"));
+<                                             }
+<                                         });
+301,318c267
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(rg.isPresent(record.get("rgid"), false) && !arry.isPresent(record.get("rid"), false)){
+<                                                     arry.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+<                                         });
+<                                     }
+< 
+<                                     if(registerCombo.store.getCount() <= 1){
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             return false;
+---
+>                                             return record.get("id") != -1;
+325c274
+<                             scope: this
+---
+>                             scope:this
+329c278,292
+<             }, {
+---
+>             }, /*{
+>                 layout: "form",
+>                 border: false,
+>                 padding: "0 5px 0 0",
+>                 items: [{
+>                     xtype: "form-components.register-select-with-all",
+>                     id: "register-drop-down-on-reporting-form-"+i,
+>                     hiddenName: "reporting_device_data[][register_id]",
+>                     width: 150,
+>                     editable: false,
+>                     disabled: true,
+>                     lastQuery: "",
+>                     mode: "local"
+>                 }]
+>             }*/{
+341c304
+<                     valueField: "rid",
+---
+>                     valueField: "id",
+344c307
+<                     store: oraApp.getDataRegistersForRepoting(),
+---
+>                     store: oraApp.getDataRegisterWithAll(),
+352,365d314
+<                     },
+<                     listeners: {
+<                         click: {
+<                             fn: function(field, rec, selIndex){
+<                                 var values = field.getValue().split(",")
+<                                 if(values.isPresent(-1, false) && values.length > 1){
+<                                     Ext.Msg.alert("Warning", "You must select Register either All or Single/Multiple.");
+<                                     field.clearValue();
+<                                     return false;
+<                                 }
+<                                 return true;
+<                             }
+<                         },
+<                         scope: this
+396a346,356
+>     
+>     removeField:function(){
+>         alert('removeField in AddReporting Form.');
+>     // Ext.getCmp('form-reporting').remove(e);
+>     // Ext.getCmp('form-reporting').doLayout();
+>     },
+> 
+>     handleRemoveDevice:function(id){
+>         alert(id);
+>         return false;
+>     },
+398,399c358,359
+<     doClose: function(btn){
+<         if(btn !== undefined && btn === "no"){
+---
+>     doClose:function(btn) {
+>         if(btn !== undefined && btn === "no") {
+406,426d365
+<         var items = this.getForm().items;
+<         var error = false, registers = items.filter('name', 'reporting_device_data[][register_id]');
+<         
+<         registers.each(function(item, index, length){
+<             if(item.store.getCount() == '0'){
+<                 error = true;
+<                 Ext.Msg.show({
+<                     title: 'Error',
+<                     msg: "Selected Register Groups not have any Registers. So, please select any Register Groups which have atleast one Register.",
+<                     modal: true,
+<                     icon: Ext.Msg.ERROR,
+<                     buttons: Ext.Msg.OK
+<                 });
+<                 return false;
+<             }
+<         });
+< 
+<         if(error){
+<             return;
+<         }
+<         
+444c383
+<                     oraApp.getDataRegistersReporting().reload();
+---
+>                     
+469,470c408,409
+<             fieldLabel: "Reporting Devices",
+<             labelStyle: "padding:0",
+---
+>             fieldLabel: "Devices",
+>             labelStyle: "font-weight:bold;padding:0",
+486d424
+<                     allowBlank: false,
+515c453
+<                                         deviceTypeCombo.clearValue();
+---
+>                                         deviceTypeCombo.setValue("");
+529,533c467,468
+<                                         registerCombo.store.clearFilter();
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             return false;
+<                                         });
+<                                         registerCombo.clearValue();
+---
+>                                         registerCombo.setValue("");
+>                                         registerCombo.setDisabled(true);
+552d486
+<                     allowBlank: false,
+575,579d508
+<                                     var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+noOfItems);
+<                                     var arr = [];
+<                                     deviceTypeCombo.store.each(function(record, id){
+<                                         arr.push(record.get("id"));
+<                                     });
+583,606c512
+<                                             if(record.get("id") != -1){
+<                                                 return [rec.id].isPresent(record.get("device_type_id"), false);
+<                                             }
+<                                             else{
+<                                                 return true;
+<                                             }
+<                                         });
+<                                     }
+<                                     else{
+<                                         arr.unshift(-1);
+<                                         if(arr && arr.length > 0){
+<                                             registerGroupCombo.store.filterBy(function(record, id){
+<                                                 if(record.get("id") != -1){
+<                                                     return arr.isPresent(record.get("device_type_id"), false);
+<                                                 }
+<                                                 else{
+<                                                     return true;
+<                                                 }
+<                                             });
+<                                         }
+<                                     }
+<                                     if(registerGroupCombo.store.getCount <= 1){
+<                                         registerGroupCombo.store.filterBy(function(record, id){
+<                                             return false;
+---
+>                                             return [-1, rec.id].isPresent(record.get("device_type_id"), false);
+614,618c520,521
+<                                     registerCombo.store.clearFilter();
+<                                     registerCombo.store.filterBy(function(record, id){
+<                                         return false;
+<                                     });
+<                                     registerCombo.clearValue();
+---
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(true);
+662d564
+<                     allowBlank: false,
+686d587
+<                                         var arr = [];
+688,699c589
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(values.isPresent(record.get("rgid"), false) && !arr.isPresent(record.get("rid"), false)){
+<                                                     arr.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+---
+>                                             return values.isPresent(record.get("rgid"), false);
+703,726d592
+<                                         var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+noOfItems);
+<                                         var rg = [], arry = [];
+<                                         registerGroupCombo.store.each(function(rec){
+<                                             if(rec.get("id") != -1){
+<                                                 rg.push(rec.get("id"));
+<                                             }
+<                                         });
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(rg.isPresent(record.get("rgid"), false) && !arry.isPresent(record.get("rid"), false)){
+<                                                     arry.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+<                                         });
+<                                     }
+< 
+<                                     if(registerCombo.store.getCount() <= 1){
+728c594
+<                                             return false;
+---
+>                                             return record.get("id") != -1;
+731c597,598
+<                                     registerCombo.clearValue();
+---
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(false);
+735c602
+<                             scope: this
+---
+>                             scope:this
+744c611
+<                     xtype: "multiselect",
+---
+>                     xtype: "form-components.register-select-with-all",
+746,747c613
+<                     fieldLabel: "Tag",
+<                     name: "reporting_device_data[][register_id]",
+---
+>                     hiddenName: "reporting_device_data[][register_id]",
+749,751c615,616
+<                     height: 50,
+<                     displayField: "tag",
+<                     valueField: "rid",
+---
+>                     editable: false,
+>                     disabled: true,
+753,776c618
+<                     ddReorder: true,
+<                     store: oraApp.getDataRegistersForRepoting(),
+<                     mode: "local",
+<                     initComponent: function(){
+<                         this.store.on("load", function(){
+<                             this.filterBy(function(record, id){
+<                                 return false;
+<                             });
+<                         });
+<                     },
+<                     listeners: {
+<                         click: {
+<                             fn: function(field, rec, selIndex){
+<                                 var values = field.getValue().split(",")
+<                                 if(values.isPresent(-1, false) && values.length > 1){
+<                                     Ext.Msg.alert("Warning", "You must select Register either All or Single/Multiple.");
+<                                     field.clearValue();
+<                                     return false;
+<                                 }
+<                                 return true;
+<                             }
+<                         },
+<                         scope: this
+<                     }
+---
+>                     mode: "local"
+791c633
+<                         scope: this
+---
+>                         scope:this
+diff -r --exclude=.svn v537/public/javascripts/app/forms/EditReporting.js v516/public/javascripts/app/forms/EditReporting.js
+2a3
+> 
+28c29
+<     initComponent: function(){
+---
+>     initComponent:function(){
+76d76
+<         var form = this;
+77a78
+>             //var current_id = record.get('id');
+78a80,90
+>             var current_device_group_name = record.get('device_group_name') != '' ? record.get('device_group_name') : null;
+>             var current_device_group_id = record.get('device_group_id') != '' ? record.get('device_group_id') : null;
+>             var current_device_type_id = record.get('device_type_id') != '' ? record.get('device_type_id') : null;
+>             var current_device_type_name = record.get('device_type_name') != '' ? record.get('device_type_name') : null;
+>             if(current_device_type_id == -1)
+>             {
+>                 current_device_type_name = " ------- All ------- ";
+>             }
+>             var current_device_id = record.get('device_id') != '' ? record.get('device_id') : null;
+>             var current_register_group_id = record.get('register_group_id') != '' ? record.get('register_group_id') : null;
+>             var current_register_id = record.get('modbus_register_tag') != '' ? record.get('modbus_register_tag') : null;
+80,88c92
+<             var dgName = record.get('dgName');
+<             var dgId = record.get('device_group_id');
+<             var dtId = record.get('device_type_id');
+<             var dtName = record.get('dtName');
+<             var dId = record.get('device_id');
+<             var rgId = record.get('register_group_id');
+<             var rId = record.get('register_id');
+< 
+<             form.add({
+---
+>             Ext.getCmp('form-edit-reporting').add({
+91,94c95,104
+<                 fieldLabel: 'Reporting Devices',
+<                 labelStyle: 'padding:0',
+<                 layout: 'hbox',
+<                 labelAlign: 'top',
+---
+>                 fieldLabel: 'Devices',
+>                 dynamic : true,
+>                 labelStyle: 'font-weight:bold;padding:0',
+>                 layout: {
+>                     type: 'hbox'
+>                 },
+>                 defaultType: 'textfield',
+>                 fieldDefaults: {
+>                     labelAlign: 'top'
+>                 },
+96,137c106,125
+<                     layout: "form",
+<                     border: false,
+<                     padding: "0 5px 0 0",
+<                     items: [{
+<                         xtype: "form-components.devicegroup-select",
+<                         id: "devicegroup-drop-down-on-reporting-form-"+current_id,
+<                         hiddenName: "reporting_device_data[][device_group_id]",
+<                         width: 150,
+<                         flex: 1,
+<                         mode: "local",
+<                         selectOnTab: false,
+<                         editable: false,
+<                         value: dgId,
+<                         valueNotFoundText: dgName,
+<                         listeners: {
+<                             select: {
+<                                 fn: function(field, rec, selIndex){
+<                                     var deviceCombo = Ext.getCmp("device-drop-down-on-reporting-form-"+current_id);
+<                                     if(deviceCombo){
+<                                         deviceCombo.store.clearFilter();
+<                                         var arr = [];
+<                                         deviceCombo.store.filterBy(function(record, id){
+<                                             if(record.get("dgid") == rec.id){
+<                                                 arr.push(record.get("dtid"));
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 return false;
+<                                             }
+<                                         });
+<                                         deviceCombo.clearValue();
+< 
+<                                         var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+current_id);
+<                                         if(deviceTypeCombo){
+<                                             if(arr && arr.length > 0){
+<                                                 arr.unshift(-1);
+<                                                 deviceTypeCombo.store.clearFilter();
+<                                                 deviceTypeCombo.store.filterBy(function(record, id){
+<                                                     return arr.isPresent(record.get("id"), false);
+<                                                 });
+<                                             }
+<                                             deviceTypeCombo.clearValue();
+---
+>                     xtype: 'form-components.devicegroup-select',
+>                     id: 'devicegroup-drop-down-on-reporting-form-'+current_id,
+>                     hiddenName: 'reporting_device_data[][device_group_id]',
+>                     html: 'Device Groups',
+>                     width: 150,
+>                     padding: '0 10px 0 0',
+>                     mode: 'local',
+>                     value: current_device_group_id,
+>                     valueNotFoundText: current_device_group_name,
+>                     listeners: {
+>                         select: {
+>                             fn: function(field, rec, selIndex){
+>                                 var deviceCombo = Ext.getCmp("device-drop-down-on-reporting-form-"+current_id);
+>                                 if(deviceCombo){
+>                                     deviceCombo.store.clearFilter();
+>                                     var arr = [];
+>                                     deviceCombo.store.filterBy(function(record, id){
+>                                         if(record.get("dgid") == rec.id){
+>                                             arr.push(record.get("dtid"));
+>                                             return true;
+139,146c127,128
+< 
+<                                         var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+current_id);
+<                                         if(registerGroupCombo){
+<                                             registerGroupCombo.store.clearFilter();
+<                                             registerGroupCombo.store.filterBy(function(record, id){
+<                                                 return false;
+<                                             });
+<                                             registerGroupCombo.clearValue();
+---
+>                                         else{
+>                                             return false;
+147a130,131
+>                                     });
+>                                     deviceCombo.clearValue();
+149,153c133,139
+<                                         var registerCombo = Ext.getCmp("register-drop-down-on-reporting-form-"+current_id);
+<                                         if(registerCombo){
+<                                             registerCombo.store.clearFilter();
+<                                             registerCombo.store.filterBy(function(record, id){
+<                                                 return false;
+---
+>                                     var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+current_id);
+>                                     if(deviceTypeCombo){
+>                                         if(arr && arr.length > 0){
+>                                             arr.unshift(-1);
+>                                             deviceTypeCombo.store.clearFilter();
+>                                             deviceTypeCombo.store.filterBy(function(record, id){
+>                                                 return arr.isPresent(record.get("id"), false);
+155c141
+<                                             registerCombo.clearValue();
+---
+>                                             deviceTypeCombo.setDisabled(false);
+157,191c143
+<                                     }
+<                                 },
+<                                 scope: this
+<                             }
+<                         }
+<                     }]
+<                 }, {
+<                     layout: "form",
+<                     border: false,
+<                     padding: '0 5px 0 0',
+<                     items: [{
+<                         xtype: "form-components.devicetypecombo",
+<                         id: "devicetype-drop-down-on-reporting-form-"+current_id,
+<                         hiddenName: "reporting_device_data[][device_type_id]",
+<                         width: 150,
+<                         editable: false,
+<                         lastQuery: "",
+<                         value: dtId,
+<                         valueNotFoundText: dtName,
+<                         listeners: {
+<                             select: {
+<                                 fn: function(field, rec, selIndex){
+<                                     var deviceCombo = Ext.getCmp("device-drop-down-on-reporting-form-"+current_id);
+<                                     if(deviceCombo){
+<                                         var deviceGroupCombo = Ext.getCmp("devicegroup-drop-down-on-reporting-form-"+current_id);
+<                                         deviceCombo.store.clearFilter();
+<                                         deviceCombo.store.filterBy(function(record, id){
+<                                             if(rec.id == -1){
+<                                                 return record.get("dgid") == deviceGroupCombo.getValue();
+<                                             }
+<                                             else{
+<                                                 return record.get("dtid") == rec.id && record.get("dgid") == deviceGroupCombo.getValue();
+<                                             }
+<                                         });
+<                                         deviceCombo.clearValue();
+---
+>                                         deviceTypeCombo.clearValue();
+196,200d147
+<                                         var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+current_id);
+<                                         var arr = [];
+<                                         deviceTypeCombo.store.each(function(record, id){
+<                                             arr.push(record.get("id"));
+<                                         });
+202,229c149,151
+<                                         if(rec.id != -1){
+<                                             registerGroupCombo.store.filterBy(function(record, id){
+<                                                 if(record.get("id") != -1){
+<                                                     return [rec.id].isPresent(record.get("device_type_id"), false);
+<                                                 }
+<                                                 else{
+<                                                     return true;
+<                                                 }
+<                                             });
+<                                         }
+<                                         else{
+<                                             arr.unshift(-1);
+<                                             if(arr && arr.length > 0){
+<                                                 registerGroupCombo.store.filterBy(function(record, id){
+<                                                     if(record.get("id") != -1){
+<                                                         return arr.isPresent(record.get("device_type_id"), false);
+<                                                     }
+<                                                     else{
+<                                                         return true;
+<                                                     }
+<                                                 });
+<                                             }
+<                                         }
+<                                         if(registerGroupCombo.store.getCount <= 1){
+<                                             registerGroupCombo.store.filterBy(function(record, id){
+<                                                 return false;
+<                                             });
+<                                         }
+---
+>                                         registerGroupCombo.store.filterBy(function(record, id){
+>                                             return false;
+>                                         });
+235,239c157,158
+<                                         registerCombo.store.clearFilter();
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             return false;
+<                                         });
+<                                         registerCombo.clearValue();
+---
+>                                         registerCombo.setValue("");
+>                                         registerCombo.setDisabled(true);
+241,243c160,162
+<                                 },
+<                                 scope: this
+<                             }
+---
+>                                 }
+>                             },
+>                             scope: this
+245,306c164,187
+<                     }]
+<                 }, {
+<                     layout: "form",
+<                     border: false,
+<                     padding: "0 5px 0 0",
+<                     items: [{
+<                         xtype: "multiselect",
+<                         id: "device-drop-down-on-reporting-form-"+current_id,
+<                         name: "reporting_device_data[][device_id]",
+<                         fieldLabel: "Devices",
+<                         width: 150,
+<                         height: 50,
+<                         displayField: "name",
+<                         valueField: "id",
+<                         lastQuery: "",
+<                         ddReorder: true,
+<                         store: oraApp.getDataDevicesWithAll()
+<                     }]
+<                 }, {
+<                     layout: "form",
+<                     border: false,
+<                     padding: "0 5px 0 0",
+<                     items: [{
+<                         xtype: 'multiselect',
+<                         id: 'registergroup-drop-down-on-reporting-form-'+current_id,
+<                         name: 'reporting_device_data[][register_group_id]',
+<                         fieldLabel: 'Register Groups',
+<                         width: 150,
+<                         height: 50,
+<                         displayField: 'name',
+<                         valueField: 'id',
+<                         lastQuery: "",
+<                         ddReorder: true,
+<                         store: oraApp.getDataRegisterGroupWithAll(),
+<                         listeners: {
+<                             click: {
+<                                 fn: function(field, rec, selIndex){
+<                                     var values = field.getValue().split(",")
+<                                     if(values.isPresent(-1, false) && values.length > 1){
+<                                         Ext.Msg.alert("Warning", "You must select Register Groups either All or Single/Multiple.");
+<                                         field.clearValue();
+<                                         return false;
+<                                     }
+<                                     var registerCombo = Ext.getCmp("register-drop-down-on-reporting-form-"+current_id);
+<                                     if(registerCombo){
+<                                         registerCombo.store.clearFilter();
+<                                         if(field.getValue() != -1){
+<                                             var arr = [];
+<                                             registerCombo.store.filterBy(function(record, id){
+<                                                 if(record.get("rid") == -1){
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     if(values.isPresent(record.get("rgid"), false) && !arr.isPresent(record.get("rid"), false)){
+<                                                         arr.push(record.get("rid"));
+<                                                         return true;
+<                                                     }
+<                                                     else{
+<                                                         return false;
+<                                                     }
+<                                                 }
+<                                             });
+---
+>                     }
+>                 },{
+>                     xtype: 'form-components.devicetypecombo',
+>                     id: 'devicetype-drop-down-on-reporting-form-'+current_id,
+>                     hiddenName: 'reporting_device_data[][device_type_id]',
+>                     html: 'Device Type',
+>                     width: 150,
+>                     padding: '0 10px 0 0',
+>                     value : current_device_type_id,
+>                     valueNotFoundText: current_device_type_name,
+>                     editable: false,
+>                     //disabled: true,
+>                     lastQuery: "",
+>                     mode: "local",
+>                     listeners: {
+>                         select: {
+>                             fn: function(field, rec, selIndex){
+>                                 var deviceCombo = Ext.getCmp("device-drop-down-on-reporting-form-"+current_id);
+>                                 if(deviceCombo){
+>                                     var deviceGroupCombo = Ext.getCmp("devicegroup-drop-down-on-reporting-form-"+current_id);
+>                                     deviceCombo.store.clearFilter();
+>                                     deviceCombo.store.filterBy(function(record, id){
+>                                         if(rec.id == -1){
+>                                             return record.get("dgid") == deviceGroupCombo.getValue();
+309,329c190
+<                                             var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+current_id);
+<                                             var rg = [], arry = [];
+<                                             registerGroupCombo.store.each(function(rec){
+<                                                 if(rec.get("id") != -1){
+<                                                     rg.push(rec.get("id"));
+<                                                 }
+<                                             });
+<                                             registerCombo.store.filterBy(function(record, id){
+<                                                 if(record.get("rid") == -1){
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     if(rg.isPresent(record.get("rgid"), false) && !arry.isPresent(record.get("rid"), false)){
+<                                                         arry.push(record.get("rid"));
+<                                                         return true;
+<                                                     }
+<                                                     else{
+<                                                         return false;
+<                                                     }
+<                                                 }
+<                                             });
+---
+>                                             return record.get("dtid") == rec.id && record.get("dgid") == deviceGroupCombo.getValue();
+330a192,194
+>                                     });
+>                                     deviceCombo.clearValue();
+>                                 }
+332,337c196,202
+<                                         if(registerCombo.store.getCount() <= 1){
+<                                             registerCombo.store.filterBy(function(record, id){
+<                                                 return false;
+<                                             });
+<                                         }
+<                                         registerCombo.clearValue();
+---
+>                                 var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+current_id);
+>                                 if(registerGroupCombo){
+>                                     registerGroupCombo.store.clearFilter();
+>                                     if(rec.id != -1){
+>                                         registerGroupCombo.store.filterBy(function(record, id){
+>                                             return [-1, rec.id].isPresent(record.get("device_type_id"), false);
+>                                         });
+339,341c204,239
+<                                     return true;
+<                                 },
+<                                 scope: this
+---
+>                                     registerGroupCombo.clearValue();
+>                                 }
+> 
+>                                 var registerCombo = Ext.getCmp("register-drop-down-on-reporting-form-"+current_id);
+>                                 if(registerCombo){
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(true);
+>                                 }
+>                             },
+>                             scope: this
+>                         }
+>                     }
+>                 },{
+>                     xtype:'multiselect',
+>                     id: 'device-drop-down-on-reporting-form-'+current_id,
+>                     name: 'reporting_device_data[][device_id]',
+>                     fieldLabel: 'Device',
+>                     width: 150,
+>                     height: 70,
+>                     padding: '0 10px 0 0',
+>                     mode: 'local',
+>                     displayField: 'name',
+>                     valueField: 'id',
+>                     ddReorder: true,
+>                     store: new app.data.RESTfulJsonStore({
+>                         id: 'ds_reportingdevices',
+>                         url: '/devices.json?via_form_component=from_component',
+>                         sortInfo: {
+>                             field: 'id',
+>                             direction: 'ASC'
+>                         },
+>                         listeners: {
+>                             load: {
+>                                 fn: function(){
+>                                     Ext.getCmp("device-drop-down-on-reporting-form-"+current_id).setValue(current_device_id);
+>                                 }
+344c242,243
+<                     }]
+---
+>                     }),
+>                     delimiter: ","
+346,360c245,266
+<                     layout: "form",
+<                     border: false,
+<                     padding: "0 5px 0 0",
+<                     items: [{
+<                         xtype: "multiselect",
+<                         id: "register-drop-down-on-reporting-form-"+current_id,
+<                         name: "reporting_device_data[][register_id]",
+<                         fieldLabel: "Tag",
+<                         width: 150,
+<                         height: 50,
+<                         displayField: "tag",
+<                         valueField: "rid",
+<                         lastQuery: "",
+<                         ddReorder: true,
+<                         store: oraApp.getDataRegistersForRepoting(),
+---
+>                     xtype: 'multiselect',
+>                     id: 'registergroup-drop-down-on-reporting-form-'+current_id,
+>                     name: 'reporting_device_data[][register_group_id]',
+>                     fieldLabel: 'Register Groups',
+>                     width: 150,
+>                     height: 70,
+>                     padding: '0 10px 0 0',
+>                     mode: 'local',
+>                     value: current_register_group_id,
+>                     displayField: 'name',
+>                     valueField: 'id',
+>                     delimiter: ",",
+>                     store: new Ext.data.JsonStore({
+>                         proxy: new Ext.data.HttpProxy({
+>                             url:'/register_groups.json?via_form_component='+'from_component',
+>                             method : 'GET'
+>                         }),
+>                         autoLoad: true,
+>                         sortInfo: {
+>                             field:'name',
+>                             direction:'ASC'
+>                         },
+362,368c268,297
+<                             click: {
+<                                 fn: function(field, rec, selIndex){
+<                                     var values = field.getValue().split(",")
+<                                     if(values.isPresent(-1, false) && values.length > 1){
+<                                         Ext.Msg.alert("Warning", "You must select Register either All or Single/Multiple.");
+<                                         field.clearValue();
+<                                         return false;
+---
+>                             load: {
+>                                 fn: function(){
+>                                     Ext.getCmp("registergroup-drop-down-on-reporting-form-"+current_id).setValue(current_register_group_id);
+>                                 }
+>                             }
+>                         }
+>                     }
+>                     ),
+>                     listeners: {
+>                         click: {
+>                             fn: function(field, rec, selIndex){
+>                                 var values = field.getValue().split(",")
+>                                 if(values.isPresent(-1, false) && values.length > 1){
+>                                     Ext.Msg.alert("Warning", "You must select Register Groups either All or Single/Multiple.");
+>                                     var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+current_id);
+>                                     field.clearValue();
+>                                     return false;
+>                                 }
+>                                 var registerCombo = Ext.getCmp("register-drop-down-on-reporting-form-"+current_id);
+>                                 if(registerCombo){
+>                                     registerCombo.store.clearFilter();
+>                                     if(field.getValue() != -1){
+>                                         registerCombo.store.filterBy(function(record, id){
+>                                             return values.isPresent(record.get("rgid"), false);
+>                                         });
+>                                     }
+>                                     else{
+>                                         registerCombo.store.filterBy(function(record, id){
+>                                             return record.get("id") != -1;
+>                                         });
+370c299,300
+<                                     return true;
+---
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(false);
+371a302
+>                                 return true;
+373c304
+<                             scope: this
+---
+>                             scope:this
+375,381c306,316
+<                     }]
+<                 }]
+<             });
+< 
+<             if(all_reporting_device.indexOf(record) != 0){
+<                 var fieldSet = Ext.getCmp("fieldset_group_"+current_id);
+<                 fieldSet.add({
+---
+>                     }
+>                 }, {
+>                     xtype: 'form-components.register-select-with-all',
+>                     id: 'register-drop-down-on-reporting-form-'+current_id,
+>                     hiddenName: 'reporting_device_data[][register_id]',
+>                     fieldLabel: 'Register',
+>                     width: 150,
+>                     padding: '0 10px 0 0',
+>                     mode: 'local',
+>                     value: current_register_id
+>                 }, {
+384c319
+<                     id: "remove-"+current_id,
+---
+>                     //id: 'remove',
+388,389c323,326
+<                                 form.remove(fieldSet, true);
+<                                 form.doLayout();
+---
+>                                 var fieldSet = Ext.getCmp("fieldset_group_"+current_id);
+>                                 var form_id = Ext.getCmp("form-edit-reporting");
+>                                 form_id.remove(fieldSet, true);
+>                                 form_id.doLayout();
+394,514c331,333
+<                 });
+<             }
+<             
+<             form.doLayout();
+< 
+<             var deviceCombo = Ext.getCmp("device-drop-down-on-reporting-form-"+current_id);
+<             if(deviceCombo){
+<                 deviceCombo.store.on("load", function(){
+<                     var arr = [];
+<                     this.filterBy(function(record, id){
+<                         if(record.get("dgid") == dgId){
+<                             arr.push(record.get("dtid"));
+<                             return true;
+<                         }
+<                         else{
+<                             return false;
+<                         }
+<                     });
+<                     if(dtId != -1){
+<                         this.filterBy(function(record, id){
+<                             return record.get("dtid") == dtId;
+<                         });
+<                     }
+<                     deviceCombo.setValue(dId);
+<                     var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+current_id);
+<                     if(deviceTypeCombo && arr && arr.length > 0){                        
+<                         arr.unshift(-1);
+<                         arr = arr.unique();
+<                         deviceTypeCombo.store.on("load", function(){
+<                             alert("deviceTypeCombo");
+<                             this.filterBy(function(record, id){
+<                                 return arr.isPresent(record.get("id"), false);
+<                             });
+<                             var registerGroupCombo = Ext.getCmp('registergroup-drop-down-on-reporting-form-'+current_id);
+<                             console.dir(registerGroupCombo);
+<                             if(registerGroupCombo){
+<                                 // alert('RG outside');
+<                                 var rg = [];
+<                                 registerGroupCombo.store.load();
+<                                 registerGroupCombo.store.on("load", function(){
+<                                     // alert('RG');
+<                                     if(dtId != -1){
+<                                         this.filterBy(function(record, id){
+<                                             if(record.get("id") != -1){
+<                                                 rg.push(record.get("id"));
+<                                                 return record.get("device_type_id") == dtId;
+<                                             }
+<                                             else{
+<                                                 return true;
+<                                             }
+<                                         });
+<                                     }
+<                                     else{
+<                                         this.filterBy(function(record, id){
+<                                             if(record.get("id") != -1){
+<                                                 rg.push(record.get("id"));
+<                                                 return arr.isPresent(record.get("device_type_id"), false);
+<                                             }
+<                                             else{
+<                                                 return true;
+<                                             }
+<                                         });
+<                                     }
+<                                     if(this.getCount() <= 1){
+<                                         this.filterBy(function(record, id){
+<                                             return false;
+<                                         });
+<                                         rg.clear();
+<                                     }
+<                                     registerGroupCombo.setValue(rgId);
+<                                     var registerCombo = Ext.getCmp("register-drop-down-on-reporting-form-"+current_id);
+<                                     // alert(registerCombo);
+<                                     
+<                                     if(registerCombo){
+<                                         //alert('Register Outside');
+<                                         registerCombo.store.load();
+<                                         registerCombo.store.on("load", function(){
+<                                             //alert('Register');
+<                                             if(rgId && rgId != -1){
+<                                                 var rgval = rgId.split(",");
+<                                                 var arry = [], samp = [];
+<                                                 this.filterBy(function(record, id){
+<                                                     if(record.get("rid") == -1){
+<                                                         return true;
+<                                                     }
+<                                                     else{
+<                                                         if(rgval.isPresent(record.get("rgid"), false) && !arry.isPresent(record.get("rid"), false)){
+<                                                             arry.push(record.get("rid"));
+<                                                             return true;
+<                                                         }
+<                                                         else{
+<                                                             return false;
+<                                                         }
+<                                                     }
+<                                                 });
+<                                             }
+<                                             else{
+<                                                 rg = rg.unique();
+<                                                 this.filterBy(function(record, id){
+<                                                     if(record.get("rid") == -1){
+<                                                         return true;
+<                                                     }
+<                                                     else{
+<                                                         return rg.isPresent(record.get("rgid"), false);
+<                                                     }
+<                                                 });
+<                                             }
+<                                             if(this.getCount() <= 1){
+<                                                 this.filterBy(function(record, id){
+<                                                     return false;
+<                                                 });
+<                                             }
+<                                             registerCombo.setValue(rId);
+<                                         });
+<                                     }
+<                                 });
+<                             }
+<                         });
+<                     }
+<                 });
+<             }
+---
+>                 }]
+>             });
+>             Ext.getCmp('form-edit-reporting').doLayout();
+526a346,355
+>     removeField:function(){
+>         alert('removeField in AddReporting Form.');
+>     // Ext.getCmp('form-reporting').remove(e);
+>     // Ext.getCmp('form-reporting').doLayout();
+>     },
+> 
+>     handleRemoveDevice:function(id){
+>         return false;
+>     },
+> 
+534,540c363,381
+<     handleReportingUpdate: function(e,t){
+<         var items = this.getForm().items;
+<         var error = false, registers = items.filter('name', 'reporting_device_data[][register_id]');
+< 
+<         registers.each(function(item, index, length){
+<             if(item.store.getCount() == '0'){
+<                 error = true;
+---
+>     handleReportingUpdate:function(e,t) {
+>         if(!this.form.isValid()){
+>             oraApp.flash('Invalid data submitted');
+>             return;
+>         }
+>         var fr = this.ownerCt;
+>         this.getForm().submit({
+>             url: '/reportings/'+this.recordId+'.json',
+>             method: 'put',
+>             waitMsg: 'Editing Report...',
+>             success: function(e, t){
+>                 var reporting_grig = new app.grids.Reportings;
+>                 reporting_grig.getStore().reload();
+>                 oraApp.getDataReportingDevices().reload();
+>                 fr.hide();
+>                 oraApp.flash("Report successfully updated");
+>             },
+>             failure: function(e, t){
+>                 var msg = Ext.decode(t.response.responseText);
+543c384
+<                     msg: "Selected Register Groups not have any Registers. So, please select any Register Groups which have atleast one Register.",
+---
+>                     msg: msg.message,
+548d388
+<                 return false;
+551,589d390
+< 
+<         if(error){
+<             return;
+<         }
+<         
+<         if(!this.form.isValid()){
+<             oraApp.flash('Invalid data submitted');
+<             return;
+<         }
+<         else{
+<             var form = this;
+<             this.getForm().submit({
+<                 url: "/reportings/"+this.recordId,
+<                 method: "PUT",
+<                 waitMsg: "Editing...",
+<                 success: function(e, t){
+<                     var msg = Ext.decode(t.response.responseText);
+<                     var grid = Ext.getCmp("grid-reporting-management");
+<                     if(grid){
+<                         grid.store.reload();
+<                     }
+<                     oraApp.getDataReportingDevices().reload();
+<                     oraApp.getDataRegistersReporting().reload();
+<                     form.ownerCt.hide();
+<                     form.getForm().reset();
+<                     oraApp.flash(msg.message);
+<                 },
+<                 failure: function(e, t){
+<                     var msg = Ext.decode(t.response.responseText);
+<                     Ext.Msg.show({
+<                         title: 'Error',
+<                         msg: msg.message,
+<                         modal: true,
+<                         icon: Ext.Msg.ERROR,
+<                         buttons: Ext.Msg.OK
+<                     });
+<                 }
+<             });
+<         }
+595a397
+>         //        var noOfItems = parseInt(field[field.length-1])+1;
+601,602c403,404
+<             fieldLabel: "Reporting Devices",
+<             labelStyle: "padding:0",
+---
+>             fieldLabel: "Devices",
+>             labelStyle: "font-weight:bold;padding:0",
+646c448
+<                                         deviceTypeCombo.clearValue();
+---
+>                                         deviceTypeCombo.setValue("");
+660,664c462,463
+<                                         registerCombo.store.clearFilter();
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             return false;
+<                                         });
+<                                         registerCombo.clearValue();
+---
+>                                         registerCombo.setValue("");
+>                                         registerCombo.setDisabled(true);
+705,709d503
+<                                     var deviceTypeCombo = Ext.getCmp("devicetype-drop-down-on-reporting-form-"+noOfItems);
+<                                     var arr = [];
+<                                     deviceTypeCombo.store.each(function(record, id){
+<                                         arr.push(record.get("id"));
+<                                     });
+713,736c507
+<                                             if(record.get("id") != -1){
+<                                                 return [rec.id].isPresent(record.get("device_type_id"), false);
+<                                             }
+<                                             else{
+<                                                 return true;
+<                                             }
+<                                         });
+<                                     }
+<                                     else{
+<                                         arr.unshift(-1);
+<                                         if(arr && arr.length > 0){
+<                                             registerGroupCombo.store.filterBy(function(record, id){
+<                                                 if(record.get("id") != -1){
+<                                                     return arr.isPresent(record.get("device_type_id"), false);
+<                                                 }
+<                                                 else{
+<                                                     return true;
+<                                                 }
+<                                             });
+<                                         }
+<                                     }
+<                                     if(registerGroupCombo.store.getCount <= 1){
+<                                         registerGroupCombo.store.filterBy(function(record, id){
+<                                             return false;
+---
+>                                             return [-1, rec.id].isPresent(record.get("device_type_id"), false);
+744,748c515,516
+<                                     registerCombo.store.clearFilter();
+<                                     registerCombo.store.filterBy(function(record, id){
+<                                         return false;
+<                                     });
+<                                     registerCombo.clearValue();
+---
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(true);
+764c532
+<                     width: 150,
+---
+>                     width: 185,
+788c556
+<                     width: 150,
+---
+>                     width: 185,
+815d582
+<                                         var arr = [];
+817,828c584
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(values.isPresent(record.get("rgid"), false) && !arr.isPresent(record.get("rid"), false)){
+<                                                     arr.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+---
+>                                             return values.isPresent(record.get("rgid"), false);
+832,855d587
+<                                         var registerGroupCombo = Ext.getCmp("registergroup-drop-down-on-reporting-form-"+noOfItems);
+<                                         var rg = [], arry = [];
+<                                         registerGroupCombo.store.each(function(rec){
+<                                             if(rec.get("id") != -1){
+<                                                 rg.push(rec.get("id"));
+<                                             }
+<                                         });
+<                                         registerCombo.store.filterBy(function(record, id){
+<                                             if(record.get("rid") == -1){
+<                                                 return true;
+<                                             }
+<                                             else{
+<                                                 if(rg.isPresent(record.get("rgid"), false) && !arry.isPresent(record.get("rid"), false)){
+<                                                     arry.push(record.get("rid"));
+<                                                     return true;
+<                                                 }
+<                                                 else{
+<                                                     return false;
+<                                                 }
+<                                             }
+<                                         });
+<                                     }
+< 
+<                                     if(registerCombo.store.getCount() <= 1){
+857c589
+<                                             return false;
+---
+>                                             return record.get("id") != -1;
+860c592,593
+<                                     registerCombo.clearValue();
+---
+>                                     registerCombo.setValue("");
+>                                     registerCombo.setDisabled(false);
+864c597
+<                             scope: this
+---
+>                             scope:this
+873c606
+<                     xtype: "multiselect",
+---
+>                     xtype: "form-components.register-select-with-all",
+875,876c608
+<                     fieldLabel: "Tag",
+<                     name: "reporting_device_data[][register_id]",
+---
+>                     hiddenName: "reporting_device_data[][register_id]",
+878,880c610,611
+<                     height: 50,
+<                     displayField: "tag",
+<                     valueField: "rid",
+---
+>                     editable: false,
+>                     disabled: true,
+882,905c613
+<                     ddReorder: true,
+<                     store: oraApp.getDataRegistersForRepoting(),
+<                     mode: "local",
+<                     initComponent: function(){
+<                         this.store.on("load", function(){
+<                             this.filterBy(function(record, id){
+<                                 return false;
+<                             });
+<                         });
+<                     },
+<                     listeners: {
+<                         click: {
+<                             fn: function(field, rec, selIndex){
+<                                 var values = field.getValue().split(",")
+<                                 if(values.isPresent(-1, false) && values.length > 1){
+<                                     Ext.Msg.alert("Warning", "You must select Register either All or Single/Multiple.");
+<                                     field.clearValue();
+<                                     return false;
+<                                 }
+<                                 return true;
+<                             }
+<                         },
+<                         scope: this
+<                     }
+---
+>                     mode: "local"
+910a619,620
+>                 width: 80,
+>                 padding: "0 5px 0 0",
+918c628
+<                         scope: this
+---
+>                         scope:this
+928c638
+< Ext.reg('app.forms.editreporting', app.forms.EditReporting);
+\ No newline at end of file
+---
+> Ext.reg('app.forms.editreporting', app.forms.EditReporting);
+diff -r --exclude=.svn v537/public/javascripts/app/forms/EditUser.js v516/public/javascripts/app/forms/EditUser.js
+3,12c3,12
+< //Ext.apply(Ext.form.VTypes, {
+< //    password: function(val, field) {
+< //        if(field.initialPassField) {
+< //            var pwd = Ext.getCmp(field.initialPassField);
+< //            return(val === pwd.getValue());
+< //        }
+< //        return true;
+< //    },
+< //    passwordText: 'The passwords entered do not match'
+< //});
+---
+> Ext.apply(Ext.form.VTypes, {
+>     password: function(val, field) {
+>         if(field.initialPassField) {
+>             var pwd = Ext.getCmp(field.initialPassField);
+>             return(val === pwd.getValue());
+>         }
+>         return true;
+>     },
+>     passwordText: 'The passwords entered do not match'
+> });
+54c54
+<             //id: 'user-password',
+---
+>             id: 'user-password',
+63c63
+<             //id: 'user-password-verify',
+---
+>             id: 'user-password-verify',
+71c71
+<             //initialPassField: 'user-password',
+---
+>             initialPassField: 'user-password',
+134d133
+<                 name: 'company_id',
+135a135
+>                 name: 'company_id',
+139,140c139,140
+<                 //id: 'company_select',
+<                 //mode: 'local',
+---
+>                 id: 'company_select_edit',
+>                 mode: 'local',
+144,150c144,147
+<                             //                            var res = Ext.getCmp("reseller_select");
+<                             //                            if(res){
+<                             //                                res.clearValue();
+<                             //                            }
+<                             if(this.getForm().findField('reseller_id'))
+<                             {
+<                                 this.getForm().findField('reseller_id').clearValue();
+---
+>                             var res = this.getForm().findField('reseller_id');
+>                             if(res){
+>                                 res.reset();
+>                                 res.clearValue();
+161,162c158
+<                 name: 'reseller_id',
+<                 xtype: 'form-components.reseller-select',
+---
+>                 xtype: 'form-components.reseller-select',                
+163a160
+>                 name: 'reseller_id',
+166c163
+<                 //id: 'reseller_select',
+---
+>                 id: 'reseller_select_edit',
+171,177c168,171
+<                             //                            var com = Ext.getCmp("company_select");
+<                             //                            if(com){
+<                             //                                com.clearValue();
+<                             //                            }
+<                             if(this.getForm().findField('company_id'))
+<                             {
+<                                 this.getForm().findField('company_id').clearValue();
+---
+>                             var comp = this.getForm().findField('company_id');
+>                             if(comp){
+>                                 comp.reset();
+>                                 comp.clearValue();
+185d178
+<         
+228,238d220
+< 
+<         if(this.getForm().findField('password_confirmation').getValue() !== this.getForm().findField('password').getValue()){
+<             Ext.Msg.show({
+<                 title: 'Error',
+<                 msg: 'The passwords entered do not match',
+<                 modal: true,
+<                 icon: Ext.Msg.ERROR,
+<                 buttons: Ext.Msg.OK
+<             });
+<             return;
+<         }
+diff -r --exclude=.svn v537/public/javascripts/app/forms/NewUser.js v516/public/javascripts/app/forms/NewUser.js
+3,4d2
+< 
+< 
+35,36c33,34
+<             mode: 'local'//,
+<         //id: 'role_id'
+---
+>             mode: 'local',
+>             id: 'role_id'
+38c36
+<             //id: 'add-user-password',
+---
+>             id: 'add-user-password',
+48c46
+<             // id: 'add-user-password-verify',
+---
+>             id: 'add-user-password-verify',
+56,57c54
+<             //initialPassField: 'add-user-password',
+<             //initialPassField: 'data[password]',
+---
+>             initialPassField: 'add-user-password',
+115c112
+< 
+---
+>     
+127,128c124,125
+<                 //id: 'company_select',
+<                 //mode: 'local',
+---
+>                 id: 'company_select',
+>                 mode: 'local',
+132,138c129,131
+<                             //                            var res = Ext.getCmp("reseller_select");
+<                             //                            if(res){
+<                             //                                res.clearValue();
+<                             //                            }
+<                             if(this.getForm().findField('data[reseller_id]'))
+<                             {
+<                                 this.getForm().findField('data[reseller_id]').clearValue();
+---
+>                             var res = Ext.getCmp("reseller_select");
+>                             if(res){
+>                                 res.clearValue();
+154c147
+<                 //id: 'reseller_select',
+---
+>                 id: 'reseller_select',
+159,165c152,154
+<                             //                            var com = Ext.getCmp("company_select");
+<                             //                            if(com){
+<                             //                                com.clearValue();
+<                             //                            }
+<                             if(this.getForm().findField('data[company_id]'))
+<                             {
+<                                 this.getForm().findField('data[company_id]').clearValue();
+---
+>                             var com = Ext.getCmp("company_select");
+>                             if(com){
+>                                 com.clearValue();
+173,177d161
+<     //
+<     //        this.on("afterrender", function(){
+<     //            this.getForm().findField('data[password_confirmation]').initialPassField = this.getForm().findField('data[password]');
+<     //
+<     //        });
+208,219d191
+< 
+<         if(this.getForm().findField('data[password_confirmation]').getValue() !== this.getForm().findField('data[password]').getValue()){
+<             Ext.Msg.show({
+<                 title: 'Error',
+<                 msg: 'The passwords entered do not match',
+<                 modal: true,
+<                 icon: Ext.Msg.ERROR,
+<                 buttons: Ext.Msg.OK
+<             });
+<             return;
+<         }
+< 
+diff -r --exclude=.svn v537/public/javascripts/app/forms/RegisterGroup.js v516/public/javascripts/app/forms/RegisterGroup.js
+173d172
+<                     var msg = Ext.decode(t.response.responseText);
+diff -r --exclude=.svn v537/public/javascripts/app/forms/RunReporting.js v516/public/javascripts/app/forms/RunReporting.js
+80c80
+<         /*var form = this;
+---
+>             /*var form = this;
+110,182c110
+<         //this.el.up(".x-window").hide();
+<         var registers = oraApp.getDataRegistersReporting(), reportingIds = this.reportingIds;
+<         for(i=0; i<reportingIds.length; i++){
+<             registers.clearFilter();
+<             registers.filterBy(function(record, id){
+<                 return record.get('reporting_id') == reportingIds[i];
+<             });
+<             var column = [], fields = [], tag, header, formWin, grid, dataStore, noReg;
+<             header = registers.query('reporting_id', new RegExp('^' + reportingIds[i] + '$', 'i')).itemAt(0).get('name');
+<             registers.each(function(record){
+<                 noReg = registers.query('register_id', new RegExp('^' + record.get('register_id') + '$', 'i')).getCount();
+<                 if(noReg > 1){
+<                     tag = record.get('dtname')+'('+record.get('tag')+')';
+<                 }
+<                 else{
+<                     tag = record.get('tag');
+<                 }
+<                 column.push({
+<                     header: tag,
+<                     dataIndex: record.get('tag').toLowerCase().replace(' ', '_'),
+<                     width: 120,
+<                     align: 'center',
+<                     sortable: true
+<                 });
+< 
+<                 fields.push({
+<                     name: record.get('tag').toLowerCase().replace(' ', '_'),
+<                     type: 'string'
+<                 });
+<             });
+<             
+<             dataStore = new Ext.data.JsonStore({
+<                 fields: fields,
+<                 //proxy: new Ext.data.HttpProxy({
+<                 //    url: '/get-device-name'
+<                 //})
+<                 data: []
+<             });
+< 
+<             grid = new Ext.grid.GridPanel({
+<                 layout: 'fit',
+<                 //width: 400,
+<                 //height: 400,
+<                 loadMask: true,
+<                 stripeRows: true,
+<                 columnLines: true,
+<                 autoWidth: true,
+<                 autoHeight: true,
+<                 frame: false,
+<                 style: {
+<                     marginBottom: '10px'
+<                 },
+<                 ds: dataStore,
+<                 columns: column
+<             });
+< 
+<             
+<             if(Ext.getCmp('reporting-win-'+i)){
+<                 Ext.getCmp('reporting-win-'+i).close();
+<             }
+< 
+<             new Ext.Window({
+<                 layout: 'fit',
+<                 id: 'reporting-win-'+i,
+<                 border: false,
+<                 title: header,
+<                 autoWidth: true,
+<                 autoHeight: true,
+<                 closeAction: 'hide',
+<                 items: grid
+<             }).show();
+<         }
+<         this.ownerCt.hide();
+---
+>         return false;
+diff -r --exclude=.svn v537/public/javascripts/app/grids/DeviceTypes.js v516/public/javascripts/app/grids/DeviceTypes.js
+4c4
+<     title: 'Device Types',
+---
+>     title: 'Manage Device Types',
+12c12
+<     layout:'fit',
+---
+> 			
+69c69
+<     doDelete:function(btn) {
+---
+>     doDelete: function(btn){
+71,89c71,73
+<             var st = this.store;
+<             var id = this.getSelectionModel().getSelected().id;
+<             Ext.Ajax.request({
+<                 url : '/device_types/'+id,
+<                 method: 'DELETE',
+<                 success: function(e, t){
+<                     st.reload();
+<                 },
+<                 failure: function(e, t){
+<                     var msg = Ext.decode(t.response.responseText);
+<                     Ext.Msg.show({
+<                         title: 'Error',
+<                         msg: msg.message,
+<                         modal: true,
+<                         icon: Ext.Msg.ERROR,
+<                         buttons: Ext.Msg.OK
+<                     });
+<                 }
+<             });
+---
+>             this.store.remove(this.getSelectionModel().getSelected());
+>             oraApp.reloadAllGrids();
+>             oraApp.reloadAllStores();
+diff -r --exclude=.svn v537/public/javascripts/app/grids/Reportings.js v516/public/javascripts/app/grids/Reportings.js
+5,6c5,6
+<     title: "Reporting",
+<     layout: "fit",
+---
+>     title: 'Reporting',
+>     layout: 'fit',
+15a16,20
+>         //oraApp.getDataDeviceTypes();
+>         //oraApp.getDataReportingDevices();
+>         //oraApp.getDataDevicesWithAll();
+>         //oraApp.getDataRegisterGroupWithAll();
+>         //oraApp.getDataRegisterWithAll();
+18c23
+<         oraApp.getDataRegistersReporting().reload();
+---
+>         
+27,29c32,34
+<         }, "-", {
+<             text: "Edit",
+<             iconCls: "userAddIcon",
+---
+>         }, '-', {
+>             text: 'Edit',
+>             iconCls: 'userAddIcon',
+33,35c38,40
+<         }, "-", {
+<             text: "Remove",
+<             iconCls: "userDeleteIcon",
+---
+>         }, '-', {
+>             text: 'Remove',
+>             iconCls: 'userDeleteIcon',
+38,40c43,45
+<         }, "-", {
+<             text: "Run Reporting",
+<             iconCls: "runReportingIcon",
+---
+>         }, '-', {
+>             text: 'Run Reporting',
+>             iconCls: 'runReportingIcon',
+46,49c51,54
+<             tbar2.add(" Resellers ", {
+<                 xtype: "form-components.resellercomboforfilter",
+<                 id: "reseller-drop-down-on-reporting",
+<                 mode: "local",
+---
+>             tbar2.add(' Resellers ', {
+>                 xtype: 'form-components.resellercomboforfilter',
+>                 id: 'reseller-drop-down-on-reporting',
+>                 mode: 'local',
+84,88c89,93
+<             tbar2.add(" Companies ", {
+<                 xtype: "form-components.company-select-with-all",
+<                 id: "company-drop-down-on-reporting",
+<                 name: "company_id",
+<                 mode: "local",
+---
+>             tbar2.add(' Companies ', {
+>                 xtype: 'form-components.company-select-with-all',
+>                 id: 'company-drop-down-on-reporting',
+>                 name: 'company_id',
+>                 mode: 'local',
+124,127c129,132
+<             tbar2.add(" Device Groups ", {
+<                 xtype: "form-components.devicegroup-select-with-all",
+<                 id: "device-group-drop-down-on-reporting",
+<                 mode: "local",
+---
+>             tbar2.add(' Device Groups ', {
+>                 xtype: 'form-components.devicegroup-select-with-all',
+>                 id: 'device-group-drop-down-on-reporting',
+>                 mode: 'local',
+162,165c167,170
+<         tbar2.add(" Users ", {
+<             xtype: "form-components.user-select-with-all",
+<             id: "user-drop-down-on-reporting",
+<             mode: "local",
+---
+>         tbar2.add(' Users ', {
+>             xtype: 'form-components.user-select-with-all',
+>             id: 'user-drop-down-on-reporting',
+>             mode: 'local',
+201,202c206,207
+<             layout: "anchor",
+<             xtype: "container",
+---
+>             layout: 'anchor',
+>             xtype: 'container',
+204c209
+<                 anchor: "100%",
+---
+>                 anchor: '100%',
+211,212c216,217
+<             header: "Report Name",
+<             dataIndex: "name",
+---
+>             header: 'Report Name',
+>             dataIndex: 'name',
+216,217c221,222
+<             header: "Description",
+<             dataIndex: "description",
+---
+>             header: 'Description',
+>             dataIndex: 'description',
+220,221c225,226
+<             header: "Device Type",
+<             dataIndex: "dtname",
+---
+>             header: 'Device Type',
+>             dataIndex: 'dtname',
+225,226c230,231
+<             header: "Device Group",
+<             dataIndex: "dgname",
+---
+>             header: 'Device Group',
+>             dataIndex: 'dgname',
+230,231c235,236
+<             header: "Create At",
+<             dataIndex: "created_at",
+---
+>             header: 'Create At',
+>             dataIndex: 'created_at',
+234c239
+<             renderer: Ext.util.Format.dateRenderer("m/d/Y")
+---
+>             renderer: Ext.util.Format.dateRenderer('m/d/Y')
+236,237c241,242
+<             header: "Updated At",
+<             dataIndex: "updated_at",
+---
+>             header: 'Updated At',
+>             dataIndex: 'updated_at',
+240c245
+<             renderer: Ext.util.Format.dateRenderer("m/d/Y")
+---
+>             renderer: Ext.util.Format.dateRenderer('m/d/Y')
+242,243c247,248
+<             header: "Last Run",
+<             dataIndex: "",
+---
+>             header: 'Last Run',
+>             dataIndex: '',
+246c251
+<             renderer: Ext.util.Format.dateRenderer("m/d/Y")
+---
+>             renderer: Ext.util.Format.dateRenderer('m/d/Y')
+265c270
+<         //var formWin = oraApp.getAddReportingForm();
+---
+>         var formWin = oraApp.getAddReportingForm();
+331,344c336,338
+<         var r = this.getSelectionModel().getSelections();
+< 
+<         if(!Ext.isArray(r) || r.length < 1){
+<             Ext.Msg.alert("No record selected", "Please click to highlight a record from the grid to run reporting.");
+<         }
+<         else{
+<             var ids = [];
+<             r = r.sort(function(a, b){
+<                 return a.id - b.id;
+<             });
+<             for(i=0; i<r.length; i++){
+<                 ids.push(r[i].id);
+<             }
+<             var formWin = new Ext.Window({
+---
+>         var formWin;
+>         if(!formWin){
+>             formWin = new Ext.Window({
+350,352c344
+<                 items: [new app.forms.RunReporting({
+<                     reportingIds: ids
+<                 })]
+---
+>                 items: [new app.forms.RunReporting()]
+354,356d345
+<             var formPanel = formWin.items.first();
+<             formPanel.form.reset();
+<             formWin.show();
+357a347,349
+>         var formPanel = formWin.items.first();
+>         formPanel.form.reset();
+>         formWin.show();
+diff -r --exclude=.svn v537/public/javascripts/application.js v516/public/javascripts/application.js
+657,669d656
+< 
+<     getDataRegistersForRepoting: function(cfg){
+<         this.dataStores.registers_for_repoting = new app.data.RESTfulJsonStore({
+<             id: 'ds_register_all',
+<             url: "/modbus_registers.json?via=reporting-form",
+<             sortInfo: {
+<                 field: 'tag',
+<                 direction: 'ASC'
+<             }
+<         });
+<         return(this.dataStores.registers_for_repoting);
+<     },
+<     
+782,785c769,772
+<             sortInfo: {
+<                 field: 'id',
+<                 direction:'ASC'
+<             }
+---
+>                 sortInfo: {
+>                     field: 'id',
+>                     direction:'ASC'
+>                 }
+1025,1026c1012,1013
+<                 id: 'ds_reportingdevices',
+<                 url: '/reportings/all_reporting_device',
+---
+>                 id:'ds_reportingdevices',
+>                 url:'/reportings/all_reporting_device',
+1028,1029c1015,1016
+<                     field: 'id',
+<                     direction: 'ASC'
+---
+>                     field:'id',
+>                     direction:'ASC'
+1036,1049d1022
+<     getDataRegistersReporting: function(){
+<         if(this.dataStores.registersreporting === undefined){
+<             this.dataStores.registersreporting = new app.data.RESTfulJsonStore({
+<                 id: 'ds_registers_reporting',
+<                 url: '/get-registers-reporting',
+<                 sortInfo: {
+<                     field: 'tag',
+<                     direction: 'ASC'
+<                 }
+<             });
+<         }
+<         return(this.dataStores.registersreporting);
+<     },
+< 
+1465,1472c1438,1445
+<         this.panels.AlertToDeviceForm = new Ext.Window({
+<             layout: 'fit',
+<             modal: true,
+<             border: false,
+<             title: 'Copy Alerts To',
+<             closeAction: 'hide',
+<             items: [new app.forms.AlertToDevice()]
+<         });
+---
+>             this.panels.AlertToDeviceForm = new Ext.Window({
+>                 layout: 'fit',
+>                 modal: true,
+>                 border: false,
+>                 title: 'Copy Alerts To',
+>                 closeAction: 'hide',
+>                 items: [new app.forms.AlertToDevice()]
+>             });
+1823c1796,1799
+< Array.prototype.isPresent = function(value, caseSensitive){
+---
+> Array.prototype.isPresent = function(value, caseSensitive)
+> // Returns true if the passed value is found in the
+> // array. Returns false if it is not.
+> {
+1839,1854d1814
+< };
+< 
+< // Return new array with duplicate values removed
+< Array.prototype.unique = function(){
+<     var a = [];
+<     var l = this.length;
+<     for(var i=0; i<l; i++){
+<         for(var j=i+1; j<l; j++){
+<             // If this[i] is found later in the array
+<             if(this[i] === this[j]){
+<                 j = ++i;
+<             }
+<         }
+<         a.push(this[i]);
+<     }
+<     return a;
+diff -r --exclude=.svn v537/public/javascripts/ext/examples/ux/MultiSelect.js v516/public/javascripts/ext/examples/ux/MultiSelect.js
+271,287c271,272
+<             if(this.valueField == 'rid'){
+<                 var regId = [];
+<                 this.view.store.each(function(rec){
+<                     if(rec.get('rid') == val[i]){
+<                         regId.push(rec.get('id'));
+<                     }
+<                 });
+< 
+<                 for(var j=0; j<regId.length; j++){
+<                     index = this.view.store.indexOfId(regId[j]);
+<                     selections.push(index);
+<                 }
+<             }
+<             else{
+<                 index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+<                 selections.push(index);
+<             }
+---
+>             index = this.view.store.indexOf(this.view.store.query(this.valueField, new RegExp('^' + val[i] + '$', "i")).itemAt(0));
+>             selections.push(index);

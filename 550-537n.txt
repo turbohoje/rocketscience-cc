@@ -1,0 +1,1443 @@
+<       @obj = Note.find_by_sql("select notes.id, notes.device_id, notes.notes, notes.description, users.email as userEmail, GetFiles(notes.id) as fileName, notes.created_at, notes.updated_at from notes inner join users on users.id = notes.user_id and users.deleted_at is null")
+<     #    @register_and_groups = RegisterAndGroup.find_by_sql("select register_and_groups.id, register_and_groups.name, cust.register_group_id, register_and_groups.parent_id, modbus_registers.units from register_and_groups inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.register_group_id is not null) as cust on cust.id = register_and_groups.parent_id inner join modbus_registers on modbus_registers.id = register_and_groups.register_id where register_and_groups.deleted_at is null group by register_and_groups.id order by register_and_groups.id asc")
+<   def list_of_registers_for_highchart
+<     @registers = RegisterAndGroup.find_by_sql("select register_and_groups.id, modbus_registers.id as rid, cust.register_group_id, modbus_registers.tag, modbus_registers.units from register_and_groups inner join (select register_and_groups.id, register_and_groups.register_group_id from register_and_groups where register_and_groups.register_group_id is not null and register_and_groups.deleted_at is null) as cust on cust.id = register_and_groups.parent_id inner join modbus_registers on modbus_registers.id = register_and_groups.register_id and modbus_registers.deleted_at is null where register_and_groups.deleted_at is null group by register_and_groups.id order by modbus_registers.id asc")
+<     @res[:metaData][:fields] = [{:name => 'id', :type => 'int'}, {:name => 'rid', :type => 'int'}, {:name => 'register_group_id', :type => 'int'}, {:name => 'tag', :type => 'string'}, {:name => 'units', :type => 'string'}]
+<     @res[:success] = true
+< 		@res[:message] = 'Returned data'
+< 		@res[:total] = @registers.count
+< 		@res[:data]	 = @registers
+< 		respond_with(@res, :status => :ok)
+<     #respond_to do |format|
+<     #  format.json { render :json => @register_and_groups }
+<     #end
+<   end
+< 
+<   respond_to :json
+<   def fields_to_display
+<     @data = ActiveRecord::Base.connection.select("SET @pattern = '[^0-9A-Za-z ]';SELECT modbus_registers.id, REPLACE(REPLACE(LOWER(TRIM(BOTH ' ' FROM REGEX_REPLACE(@pattern, '', modbus_registers.tag))), '  ', ' '), ' ', '_') AS tag, modbus_registers.units FROM data_float INNER JOIN modbus_registers ON modbus_registers.id = data_float.register AND modbus_registers.deleted_at IS NULL GROUP BY modbus_registers.id;")
+<     @res[:metaData][:fields] = [{:name => :id, :type => :int}, {:name => :tag, :type => :string}, {:name => :units, :type => :string}]
+<     @res[:success] = true
+<     @res[:message] = "Returned data"
+<     @res[:total] = @data.count
+<     @res[:data] = @data
+<     respond_with(@res, :status => :ok)
+<   end
+< 
+<   def data_to_display_graph
+<     @data = ActiveRecord::Base.connection.select_sp("CALL GetHighchartData(#{params[:device_id].to_i});")
+<     unless @data.blank?
+<       @res[:metaData][:fields] = @data[0].keys()
+<       if !params[:start].blank? and !params[:end].blank?
+<         @data.collect! { |data|
+<           data['date'].to_date < params[:start].to_date || (data['date'].to_date > params[:start].to_date && data['date'].to_date > params[:end].to_date)
+<         }
+<       elsif !params[:start].blank? and params[:end].blank?
+<         @data = @data.collect! { |data|
+<           data['date'].to_date < params[:start].to_date
+<         }
+<       elsif params[:start].blank? and !params[:end].blank?
+<         @data.collect! { |data|
+<           data['date'].to_date > params[:end].to_date
+<         }
+<       end
+<     end
+<     respond_to do |format|
+<       format.json { render :json => @data }
+<     end
+<   end
+< 
+<   def data_to_display
+<     @data = ActiveRecord::Base.connection.select_sp("CALL GetHighchartData(#{params[:device_id].to_i});")
+<     @res[:metaData][:fields] = [{:name => 'id', :type => 'int'}, {:name => 'device_id', :type => 'int'}, {:name => 'date', :type => 'datetime'}]
+<     unless @data.blank?
+<       (@data[0].keys().sort-['id', 'device_id', 'date']).each{|key| @res[:metaData][:fields].concat([{:name => key, :type => 'float'}])}
+<       @data = [@data.first] unless params[:limit].blank?
+<     end
+<     @res[:success] = true
+<     @res[:message] = "Returned data"
+<     @res[:total] = @data.count
+<     @res[:data] = @data
+<     respond_with(@res, :status => :ok)
+<   end
+< 
+<   def list_of_register_groups_for_highchart
+<     @register_groups = RegisterGroup.find_by_sql("select register_groups.id, register_groups.name, register_groups.display_name, register_groups.device_type_id, register_groups.display_type, units.name as leftaxis, cust_u.name as rightaxis from register_groups inner join register_and_groups on register_groups.id = register_and_groups.register_group_id and register_and_groups.deleted_at is null and register_and_groups.device_type_id is null and register_and_groups.register_id is null inner join (select register_and_groups.id, register_and_groups.parent_id from register_and_groups where register_and_groups.deleted_at is null and register_and_groups.register_id is not null and register_and_groups.device_type_id is null and register_and_groups.register_group_id is null) as cust_rag on cust_rag.parent_id = register_and_groups.id left join units on units.id = register_groups.left_axis_unit_id and units.deleted_at is null left join (select units.id, units.name from units where units.deleted_at is null) as cust_u on cust_u.id = register_groups.right_axis_unit_id where register_groups.display_type != 'Read' and register_groups.display_type != 'Read/Write' and register_groups.display_type != 'Write' and register_groups.display_type != 'Display Dashboard - Table' and register_groups.display_type != 'Display Maps' and register_groups.display_type != '' and register_groups.deleted_at is null group by register_groups.id")
+<     respond_to do |format|
+<       format.json { render :json => @register_groups }
+<     end
+<   end
+<   body{font-family: verdana;}
+<   <h2>Sign in</h2>
+<   <img width='503' height='329' src='/images/loginamci.jpg' alt='AMCi' />
+<   <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+> <h2>Sign in</h2>
+> <img width='503' height='329' src='/images/loginamci.jpg' alt='AMCi'>
+> <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+<   <% end %>
+<   <%= render :partial => 'devise/shared/links' %>
+> <% end %>
+> <%= render :partial => 'devise/shared/links' %>
+<   <%= link_to "Sign in", login_path %><br />
+>   <%= link_to "Sign in", new_session_path(resource_name) %><br />
+<       if(!console || console === undefined){
+<   match 'data-to-display-graph' => "polling_schedule#data_to_display_graph", :as => "data_to_display_graph"
+<   match 'fields-to-display' => "polling_schedule#fields_to_display", :as => "fields_to_display"
+<   match 'data-to-display' => "polling_schedule#data_to_display", :as => "data_to_display"
+<   match 'list-of-register-groups-for-highchart' => "register_groups#list_of_register_groups_for_highchart", :as => "list_of_register_groups_for_highchart"
+<   match 'list-of-registers-for-highchart' => "modbus_registers#list_of_registers_for_highchart", :as => "list_of_registers_for_highchart"
+< rails runner 'require("db/migrate/20111115074838_create_function_regex_replace.rb").first.constantize.up'
+< rails runner 'require("db/migrate/20111115110033_create_stored_procedure_get_highchart_data.rb").first.constantize.up'
+<         for(var i = 0; i < series.length; i++){
+>         for (var i = 0; i < series.length; i++) {
+<             if(!serie.serieCls){
+<                 if(serie.type != null || this.defaultSerieType != null){
+<                     cls = Ext.ux.HighChart.Series.get(serie.type != null ? serie.type : this.defaultSerieType, serie.unit)
+<                 }
+<                 else{
+<                 serieObject = new cls(serie);
+<             }
+<             else{
+<     afterRender: function(){
+<         if(this.store){
+<         for(var i = 0; i < records.length; i++){
+>         for (var i = 0; i < records.length; i++) {
+<             if(i == records.length - 1){
+<             if(this.xField){
+<             //alert('this.chart : '+JSON.stringify(this.chart));
+<             for(var x = 0; x < this.chart.series.length; x++){
+>             for (var x = 0; x < this.chart.series.length; x++) {
+<     if(!config.data){
+<     if(!config.unit){
+<         config.unit = null;
+<     }
+<                 })
+<             }
+<             function N(k,o){
+<             function za(){
+<                     F||t((i.plotLines||[]).concat(i.plotBands||[]),function(s){
+<                 }
+<                 t([tb,ac,gc],function(s){
+<                 if(q){
+<                 false
+<             }
+<             function Ya(k){
+<             i=sa(Ea?Nc:jd,[$d,ae,Nd,be][Y],i);
+<             var w=this,L=i.type,E=L==="datetime",D=L==="logarithmic",M=i.offset||0,ha=Ea?"x":"y",oa,va,fb,eb=z?Z:sb,Fb,Ub,hc,I,ja,T,ra,Da,Ha,Ma,ca=null,aa=null,Db,Md,Kd=i.minPadding,Ld=i.maxPadding,Sb=J(i.linkedTo),Id,Jd,Kc;
+<             L=i.events;
+<             var kd,Tb=[],Qa,Lc,Cb,ua,tb={},ac={},gc={},ic,jc,id,Mc,Wa=i.categories,ce=i.labels.formatter||function(){
+<             y.prototype={
+<             x.prototype={
+<                     if(r&&J(r.text)&&s&&s.length&&Ba>0&&xa>0){
+<                     return k
+<                 },
+<                 destroy:function(){
+<             };
+<             R.prototype={
+<             Fb=function(k,o,r,q,A){
+<             Ub=function(k,o,r){
+<             if(qa&&Ea&&bc===Ua)bc=true;
+<             pa(w,{
+<                 categories:Wa,
+<                 getExtremes:function(){
+<                 },
+<                 getPlotLinePath:Ub,
+<                 getThreshold:function(k){
+<                 isXAxis:Ea,
+<                 options:i,
+<                 plotLinesAndBands:Tb,
+<                 getOffset:function(){
+<                 render:Oa,
+<                 setCategories:function(k,o){
+<                 setExtremes:function(k,o,r,q){
+<                 setScale:za,
+<                 setTickPositions:Ka,
+<                 translate:Fb,
+<                 redraw:function(){
+<                 removePlotBand:Ya,
+<                 removePlotLine:Ya,
+<                 reversed:bc,
+<                 stacks:v
+<             });
+<             for(kd in L)Sa(w,kd,L[kd]);za()
+<         }
+<         function d(){
+<         }
+<         function e(m){
+<             Ka.padding=
+<             0;
+<             var v=da.g("tooltip").attr({
+<             }).add(),w=da.rect(Oa,Oa,0,0,m.borderRadius,na).attr({
+<             }).add(v).shadow(m.shadow),L=da.text("",Na+Oa,la(Ka.fontSize)+Na+Oa).attr({
+<             }).css(Ka).add(v);
+<             v.hide();
+<             return{
+<                 },
+<                 hide:x
+<             }
+<         }
+<         function f(m,i){
+<                 ya.onmousemove=Y;
+<                 Sa(ya,"mouseleave",R);
+<                 ya.ontouchstart=function(v){
+<                 ya.ontouchmove=Y;
+<                 ya.ontouchend=function(){
+<                 ya.onclick=function(v){
+<             })();
+<             Pd=setInterval(function(){
+<             pa(this,{
+<             })
+<         }
+<         function g(m){
+<             if(i&&qd.renderLegend){
+<             }
+<             if(x){
+<             t(Ga,function(ba){
+<             kc&&kc.resetTracker&&kc.resetTracker();
+<             Pa(p,"redraw")
+<         }
+<         function l(){
+<         function n(m,i){
+<         function G(){
+<             Sa(ab,"resize",m);
+<             Sa(p,"destroy",function(){
+<         }
+<         function fa(){
+<         function K(){
+<         Nc=sa(Nc,Va.xAxis);
+<         jd=sa(jd,Va.yAxis);
+<         Va.xAxis=Va.yAxis=null;
+<         a=sa(Va,a);
+<         var u=a.chart,P=u.margin;
+<         P=Kb(P)?P:[P,P,P,P];
+<         var O=B(u.marginTop,P[0]),Q=B(u.marginRight,P[1]),H=B(u.marginBottom,P[2]),S=B(u.marginLeft,P[3]),Ta=u.spacingTop,cb=u.spacingRight,Ib=u.spacingBottom,Jb=u.spacingLeft,
+<         Ob,Hb,xc,ea,Eb,sb,Z,Vb,mb,Wb,ya,Qd,Vc,yc,Xa,Ra,ld,Qc,Zc,wd,xd,$c,p=this,de=(P=u.events)&&!!P.click,yd,lc,vc,pd,dc,Td,zd,xa,Ba,kc,Sc,Rc,qd,Xb,Yb,uc,mc=u.showAxes,Tc=0,bb=[],Lb,Ga=[],qa,da,md,Pd,nd,rd,wc,ud,vd,td,od,Ud,ee=function(m){
+<                 Ha.getBBox();
+<                 T=I.legendItemWidth=N.itemWidth||Ka+za+ja.width+Y;
+<                 M=ja.height;
+<                 if(ba&&L-w+T>(Fb||Xa-2*z-w)){
+<                 y(I,L,E);
+<                 if(ba)L+=T;else E+=M;
+<                 eb=Fb||Fa(ba?L-w:T,eb)
+<             }
+<             function na(){
+<                 }),true,Ob);
+<                 Tc||x()
+<             }
+<             var N=m.options.legend;
+<             if(N.enabled){
+<             }
+<         };
+<         lc=function(m,i){
+<         Ud=function(){
+<         od=function(m){
+<         wc=function(){
+<         td=function(m,
+<         vd=function(){
+<         ud=function(){
+<         rd=function(){
+<         Sa(ab,"unload",K);
+<         u.reflow!==false&&Sa(p,"load",
+<         if(P)for(yd in P)Sa(p,yd,P[yd]);p.options=a;
+<         p.series=Ga;
+<         p.addSeries=function(m,i,y){
+<         p.animation=B(u.animation,true);
+<         p.destroy=K;
+<         p.get=function(m){
+<         p.getSelectedPoints=function(){
+<         p.getSelectedSeries=function(){
+<         p.hideLoading=function(){
+<             zd=false
+<         };
+<         p.isInsidePlot=lc;
+<         p.redraw=j;
+<         p.setSize=td;
+<         p.setTitle=n;
+<         p.showLoading=function(m){
+<         p.pointCount=0;
+<         ia()
+<     }
+<     var wa=document,ab=window,ta=Math,X=ta.round,kb=ta.floor,hd=ta.ceil,Fa=ta.max,qb=ta.min,db=ta.abs,nb=ta.cos,Bb=ta.sin,Zb=ta.PI,Vd=Zb*2/360,qc=navigator.userAgent,Cc=/msie/i.test(qc)&&!ab.opera,Ac=wa.documentMode===8,Od=/AppleWebKit/.test(qc),Sd=/Firefox/.test(qc),
+<     zc=!!wa.createElementNS&&!!wa.createElementNS("http://www.w3.org/2000/svg","svg").createSVGRect,Xc,Nb=wa.documentElement.ontouchstart!==undefined,Pb,Yc,Wd={},sd=0,rb=1,Ic,Va,Oc,Dc,bd,Ua,Rb="div",pc="absolute",Rd="relative",gb="hidden",oc="highcharts-",ub="visible",$a="px",jb="none",Za="M",Ja="L",Xd="rgba(192,192,192,"+(zc?1.0E-6:0.0020)+")",hb="",Ab="hover",Ec,dd,ed,fd,tc,Fc,Gc,Dd,Ed,gd,Fd,Gd,ka=ab.HighchartsAdapter,wb=ka||{},t=wb.each,Ad=wb.grep,nc=wb.map,sa=wb.merge,Yd=wb.hyphenate,Sa=wb.addEvent,
+<     Gb=wb.removeEvent,Pa=wb.fireEvent,ad=wb.animate,Uc=wb.stop,vb={};
+<     Oc=function(a,b,c){
+<     ka&&ka.init&&ka.init();
+<     if(!ka&&ab.jQuery){
+<         var fe=jQuery.fx.step._default,ge=jQuery.fx.prototype.cur;
+<         ob.fx.step._default=function(a){
+<         ob.fx.step.d=function(a){
+<         ob.fx.prototype.cur=function(){
+<     }
+<     bd={
+<     ka={
+<     };
+<     Va={
+<         subtitle:{
+<         },
+<         plotOptions:{
+<                 point:{
+<                 },
+<                 dataLabels:sa(ka,
+<                 {
+<                 showInLegend:true,
+<                 states:{
+<                     },
+<                     select:{
+<                     }
+<                 },
+<                 stickyTracking:true
+<             }
+<         },
+<         labels:{
+<         },
+<         legend:{
+<         },
+<         loading:{
+<         },
+<         tooltip:{
+<         },
+<         toolbar:{
+<         },
+<         credits:{
+<         }
+<     };
+<     var Nc={
+<         type:"linear"
+<     },jd=sa(Nc,{
+<     },ae={
+<     },Nd={
+<     },$d=sa(Nd,{
+<     }),xb=Va.plotOptions;
+<     ka=xb.line;
+<     xb.spline=sa(ka);
+<     xb.scatter=sa(ka,{
+<     });
+<     xb.area=sa(ka,{});
+<     xb.areaspline=sa(xb.area);
+<     xb.column=sa(ka,{
+<         dataLabels:{
+<         }
+<     });
+<     xb.bar=sa(xb.column,{
+<     });
+<     xb.pie=sa(ka,{
+<     });
+<     Cd();
+<     var $b=function(a){
+<     };
+<     Jc.prototype={
+<         attr:function(a,b){
+<         },
+<         symbolAttr:function(a){
+<         clip:function(a){
+<         crisp:function(a,b,c,d,e){
+<         css:function(a){
+<         on:function(a,b){
+<             return this
+<         },
+<         translate:function(a,b){
+<         invert:function(){
+<         updateTransform:function(){
+<         toFront:function(){
+<         align:function(a,b,c){
+<         getBBox:function(){
+<             c=a.height;
+<             if(d){
+<         },
+<         show:function(){
+<         hide:function(){
+<         add:function(a){
+<             this.added=true;
+<             return this
+<         },
+<         destroy:function(){
+<         empty:function(){
+<         shadow:function(a,
+<     };
+<     var Wc=function(){
+<     Wc.prototype={
+<                         if(P)H.dx=3;else H.x=g;
+<                         if(!P){
+<                                 O=ab.getComputedStyle&&ab.getComputedStyle(G,null).getPropertyValue("line-height");
+<                                 if(!O||isNaN(O))O=C||G.offsetHeight||18;
+<                                 Ca(S,"dy",O)
+<                         Ca(S,H);
+<                         b.appendChild(S);
+<                         P++;
+<                         if(n){
+<                             Q=Q.replace(/-/g,"- ").split(" ");
+<                             for(var Ta,cb=[];Q.length||cb.length;){
+<                                 Ta=b.getBBox().width;
+<                                 H=Ta>n;
+<                                 if(!H||Q.length===1){
+<                                     Q=cb;
+<                                     cb=[];
+<                                     if(Q.length){
+<                                         S=wa.createElementNS("http://www.w3.org/2000/svg","tspan");
+<                                         Ca(S,{
+<                                         });
+<                                         b.appendChild(S);
+<                                         if(Ta>n)n=Ta
+<                                     S.removeChild(S.firstChild);
+<                                     cb.unshift(Q.pop())
+<         crispLine:function(a,b){
+<             if(a[1]===a[4])a[1]=a[4]=X(a[1])+b%2/2;
+<             if(a[2]===a[5])a[2]=a[5]=X(a[2])+b%2/2;
+<             return a
+<         path:function(a){
+<         circle:function(a,b,c){
+<         arc:function(a,b,c,d,e,f){
+<                 b=a.y;
+<                 c=a.r;
+<                 d=a.innerR;
+<                 e=a.start;
+<                 f=a.end;
+<                 a=a.x
+<         rect:function(a,b,c,d,e,f){
+<                 b=a.y;
+<                 c=a.width;
+<                 d=a.height;
+<                 e=a.r;
+<                 f=a.strokeWidth;
+<                 a=a.x
+<             });
+<             return e.attr(e.crisp(f,a,b,Fa(c,0),Fa(d,0)))
+<         setSize:function(a,b,c){
+<             var d=this.alignedObjects,e=d.length;
+<             this.width=a;
+<             this.height=b;
+<             for(this.boxWrapper[B(c,true)?"animate":"attr"]({
+<         g:function(a){
+<         image:function(a,b,c,d,e){
+<             });
+<             f=
+<             this.createElement("image").attr(f);
+<             f.element.setAttributeNS?f.element.setAttributeNS("http://www.w3.org/1999/xlink","href",a):f.element.setAttribute("hc-svg-href",a);
+<             return f
+<         symbol:function(a,b,c,d,e){
+<             var f,g=this.symbols[a];
+<             g=g&&g(X(b),X(c),d,e);
+<             var h=/^url\((.*?)\)$/,j;
+<             if(g){
+<                 f=this.path(g);
+<                 pa(f,{
+<                 });
+<                 e&&pa(f,e)
+<             return f
+<         },
+<         symbols:{
+<         clipRect:function(a,b,c,d){
+<         color:function(a,b,c){
+<         text:function(a,b,c){
+<     };
+<     Xc=Wc;
+<     if(!zc){
+<             shadow:function(a,b){
+<         });
+<         ka=function(){
+<         ka.prototype=sa(Wc.prototype,{
+<             clipRect:function(a,b,c,d){
+<             },
+<             color:function(a,b,c){
+<             prepVML:function(a){
+<             text:function(a,b,c){
+<             path:function(a){
+<             circle:function(a,b,c){
+<             g:function(a){
+<             image:function(a,b,c,d,e){
+<             rect:function(a,b,c,d,e,f){
+<             invertChild:function(a,
+<             symbols:{
+<         });
+<         Xc=ka
+<     }
+<     Hd.prototype.callbacks=[];
+<     var Bc=function(){};
+<     Bc.prototype={
+<         select:function(a,b){
+<         },
+<         onMouseOver:function(){
+<         onMouseOut:function(){
+<         tooltipFormatter:function(a){
+<         update:function(a,b,c){
+<         remove:function(a,b){
+<         firePointEvent:function(a,
+<         importEvents:function(){
+<         setState:function(a){
+<     };
+<     var pb=function(){};
+<     pb.prototype={
+<         getSegments:function(){
+<         setOptions:function(a){
+<         getColor:function(){
+<         getSymbol:function(){
+<         addPoint:function(a,b,c,d){
+<         setData:function(a,b){
+<         remove:function(a,b){
+<         translate:function(){
+<         setTooltipPoints:function(a){
+<         onMouseOver:function(){
+<         onMouseOut:function(){
+<         animate:function(a){
+<         },
+<         drawPoints:function(){
+<         convertAttribs:function(a,b,c,d){
+<         getAttribs:function(){
+<         destroy:function(){
+<             if(b.hoverSeries===a)b.hoverSeries=null;
+<             rc(b.series,a);
+<             for(e in a)delete a[e]
+<         },
+<         drawDataLabels:function(){
+<         },
+<         drawGraph:function(){
+<                     if(b.stacking&&a.type!=="areaspline")for(O=u.length-1;O>=0;O--)P.push(u[O].plotX,u[O].yBottom);else P.push(Ja,u[u.length-1].plotX,G,Ja,u[0].plotX,G);
+<                     ia=ia.concat(P)
+<             });
+<             a.graphPath=d;
+<             a.singlePoints=K;
+<             if(fa){
+<                 e=B(b.fillColor,$b(a.color).setOpacity(b.fillOpacity||0.75).get());
+<                 if(f)f.animate({
+<             });
+<             else if(j){
+<         },
+<         render:function(){
+<             a.isDirty=false
+<         },
+<         redraw:function(){
+<         setState:function(a){
+<         },
+<         setVisible:function(a,b){
+<                 j[e];
+<                 f.tracker&&f.tracker[h]()
+<             g&&g[h]();
+<             d&&c.legend.colorizeItem(this,a);
+<             this.isDirty=true;
+<             this.options.stacking&&t(c.series,function(n){
+<             });
+<             if(l)c.isDirtyBox=true;
+<             b!==false&&c.redraw();
+<             Pa(this,h)
+<         show:function(){
+<         hide:function(){
+<         select:function(a){
+<             this.selected=a=a===Ua?!this.selected:a;
+<             if(this.checkbox)this.checkbox.checked=a;
+<             Pa(this,a?"select":"unselect")
+<         drawTracker:function(){
+<             c=[].concat(a.graphPath),d=c.length,e=a.chart,f=e.options.tooltip.snap,g=a.tracker,h=b.cursor;
+<             h=h&&{
+<             var j=a.singlePoints,l;
+<             if(d)for(l=d+1;l--;){
+<                 c[l]===Za&&c.splice(l+1,0,c[l+1]-f,c[l+2],Ja);
+<                 if(l&&c[l]===Za||l===d)c.splice(l,0,Ja,c[l-2]+f,c[l-1])
+<                 d=j[l];
+<                 c.push(Za,d.plotX-f,d.plotY,Ja,d.plotX+f,d.plotY)
+<     };
+<     ka=yb(pb);
+<     vb.line=ka;
+<     ka=yb(pb,{
+<     });
+<     vb.area=ka;
+<     ka=yb(pb,{
+<             var d=b.plotX,e=b.plotY,f=a[c-1],g=a[c+1],h,j,l,n;
+<             if(c&&c<a.length-1){
+<                 a=f.plotY;
+<                 l=g.plotX;
+<                 g=g.plotY;
+<                 var C;
+<                 h=(1.5*d+f.plotX)/2.5;
+<                 j=(1.5*e+a)/2.5;
+<                 l=(1.5*d+l)/2.5;
+<                 n=(1.5*e+g)/2.5;
+<                 C=(n-j)*(l-d)/(l-h)+e-n;
+<                 j+=C;
+<                 n+=C;
+<                 if(j>a&&j>e){
+>     var d=b.plotX,e=b.plotY,f=a[c-1],g=a[c+1],h,j,l,n;if(c&&c<a.length-1){
+<                         e);
+<                     n=2*e-j
+<                 b.rightContY=n
+<             }
+<             if(c){
+<     });
+<     vb.spline=ka;
+<     ka=yb(ka,{
+<     });
+<     vb.areaspline=ka;
+<     var cd=yb(pb,{
+<         getSymbol:function(){},
+<         },
+<         drawTracker:function(){
+<         },
+<         animate:function(a){
+<         },
+<         remove:function(){
+<     });
+<     vb.column=cd;
+<     ka=yb(cd,{
+<     vb.bar=ka;
+<     ka=yb(pb,{
+<         drawTracker:function(){
+<         cleanData:function(){}
+<     });
+<     vb.scatter=ka;
+<     ka=yb(Bc,{
+<     ka=yb(pb,{
+<         translate:function(){
+<         render:function(){
+<         drawPoints:function(){
+<         drawDataLabels:function(){
+<         },
+<         drawTracker:cd.prototype.drawTracker,
+<         getSymbol:function(){}
+<     });
+<     vb.pie=ka;
+<     ab.Highcharts={
+<     }
+<     // encapsulated variables
+<     var doc = document,
+<     /**
+<     function extend(a, b) {
+<     }
+<     /**
+<     function pInt(s, mag) {
+<     }
+<     /**
+<     function isString(s) {
+<     }
+<     /**
+<     function isObject(obj) {
+<     }
+<     /**
+<     function isNumber(n) {
+<     }
+<     function log2lin(num) {
+<     }
+<     function lin2log(num) {
+<     }
+<     /**
+<     function erase(arr, item) {
+<     }
+<     /**
+<     function defined (obj) {
+<     }
+<     /**
+<     function attr(elem, prop, value) {
+<     }
+<     /**
+<     function splat(obj) {
+<     }
+<     /**
+<     function pick() {
+<     }
+<     /**
+<     function serializeCSS(style) {
+<     }
+<     /**
+<     function css (el, styles) {
+<     }
+<     /* *
+<     /**
+<     function createElement (tag, attribs, styles, parent, nopad) {
+<             css(el, {
+<                 padding: 0,
+<                 border: NONE,
+<                 margin: 0
+<             });
+<     }
+<     /**
+<     function extendClass(parent, members) {
+<     }
+<     /**
+<     function numberFormat (number, decimals, decPoint, thousandsSep) {
+<     }
+<     /**
+<     dateFormat = function (format, timestamp, capitalize) {
+<     };
+<     /**
+<     function getPosition (el) {
+<         var p = {
+<             left: el.offsetLeft,
+<             top: el.offsetTop
+<         };
+<     }
+<     /**
+<     function setAnimation(animation, chart) {
+<     }
+<     /*
+<     if (globalAdapter && globalAdapter.init) {
+<     }
+<     if (!globalAdapter && win.jQuery) {
+<             return str.replace(/([A-Z])/g, function(a, b){
+<                 return '-'+ b.toLowerCase();
+<             });
+<     }
+<     /**
+<     /*addEvent(doc, 'mousemove', function(e) {
+<     /**
+<     pathAnim = {
+<     };
+<     /**
+<     function setTimeMethods() {
+<     }
+<     /**
+<     function setOptions(options) {
+<     }
+<     /**
+<     function getOptions() {
+<     }
+<     /**
+<     function discardElement(element) {
+<     }
+<     /* ****************************************************************************
+<     var
+<     defaultLabelOptions = {
+<     };
+<     defaultOptions = {
+<     };
+<     // Axis defaults
+<     var defaultXAxisOptions =  {
+<     },
+<     defaultYAxisOptions = merge(defaultXAxisOptions, {
+<     }),
+<     defaultLeftAxisOptions = {
+<     },
+<     defaultRightAxisOptions = {
+<     },
+<     defaultBottomAxisOptions = { // horizontal axis
+<     },
+<     defaultTopAxisOptions = merge(defaultBottomAxisOptions, {
+<     });
+<     // Series defaults
+<     var defaultPlotOptions = defaultOptions.plotOptions,
+<     //defaultPlotOptions.line = merge(defaultSeriesOptions);
+<     defaultPlotOptions.spline = merge(defaultSeriesOptions);
+<     defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
+<     });
+<     defaultPlotOptions.area = merge(defaultSeriesOptions, {
+<         });
+<     defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
+<     defaultPlotOptions.column = merge(defaultSeriesOptions, {
+<     });
+<     defaultPlotOptions.bar = merge(defaultPlotOptions.column, {
+<     });
+<     defaultPlotOptions.pie = merge(defaultSeriesOptions, {
+<     });
+<     // set the default time methods
+<     setTimeMethods();
+<     /**
+<     var Color = function(input) {
+<     };
+<     /**
+<     function SVGElement () {}
+<     SVGElement.prototype = {
+<                     key = {
+<                         x: 'cx',
+<                         y: 'cy'
+<                     }
+<                     [key] || key;
+<                         key = {
+<                             x: 'cx',
+<                             y: 'cy'
+<                         }
+<                         [key] || key;
+<                         value = {
+<                             left: 'start',
+<                             center: 'middle',
+<                             right: 'end'
+<                         }
+<                         [value];
+<                 {
+<                     right: 1,
+<                     center: 2
+<                 }
+<                 [align];
+<                 ({
+<                     bottom: 1,
+<                     middle: 2
+<                 }
+<                 [vAlign] || 1);
+<                 bBox = {
+<                     width: 0,
+<                     height: 0
+<                 };
+<             return this.attr({
+<                 visibility: VISIBLE
+<             });
+<             return this.attr({
+<                 visibility: HIDDEN
+<             });
+<     };
+<     /**
+<     var SVGRenderer = function() {
+<     };
+<     SVGRenderer.prototype = {
+<                             css(tspan, {
+<                                 cursor: 'pointer'
+<                             });
+<                                     css(tspan, {
+<                                         display: 'block'
+<                                     });
+<                 defined(name) && {
+<                     'class': PREFIX + name
+<                 }
+<                     obj.attr({
+<                         width: 0,
+<                         height: 0
+<                     });
+<     }; // end SVGRenderer
+<     // general renderer
+<     Renderer = SVGRenderer;
+<     /* ****************************************************************************
+<     var VMLRenderer;
+<     if (!hasSVG) {
+<         /**
+<         var VMLElement = extendClass( SVGElement, {
+<                     css(element, {
+<                         visibility: HIDDEN
+<                     });
+<                                     css(childNodes[i], {
+<                                         visibility: value
+<                                     });
+<                                 elemStyle[{
+<                                     x: 'left',
+<                                     y: 'top'
+<                                 }
+<                                 [key]] = value;
+<                 alignCorrection = {
+<                     left: 0,
+<                     center: 0.5,
+<                     right: 1
+<                 }
+<                 [align],
+<         });
+<         /**
+<         VMLRenderer = function() {
+<         };
+<         VMLRenderer.prototype = merge( SVGRenderer.prototype, { // inherit SVGRenderer
+<                 return this.symbol('circle').attr({
+<                     x: x,
+<                     y: y,
+<                     r: r
+<                 });
+<                     attribs = {
+<                         'className': PREFIX + name,
+<                         'class': PREFIX + name
+<                     };
+<                 .attr({
+<                     src: src
+<                 });
+<         });
+<         // general renderer
+<         Renderer = VMLRenderer;
+<     }
+<     /* ****************************************************************************
+<     /**
+<     function Chart (options, callback) {
+<                     css = width && {
+<                         width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) +PX
+<                     };
+<                         label.attr({
+<                             text: str
+<                         })
+<                         stackItem.label.attr({
+<                             text: str,
+<                             visibility: HIDDEN
+<                         });
+<                         .attr({
+<                             align: stackItem.textAlign,			// fix the text-anchor
+<                             visibility: HIDDEN
+<                         })					// hidden until setOffset is called
+<                         .attr({
+<                             visibility: VISIBLE
+<                         });					// set visibility
+<                     .attr({
+<                         zIndex: 7
+<                     })
+<                     .attr({
+<                         zIndex: 1
+<                     })
+<                         if (side === 0 || side === 2 || {
+<                             1: 'left',
+<                             3: 'right'
+<                         }
+<                         [side] === labelOptions.align) {
+<                             {
+<                                 low: 'left',
+<                                 middle: 'center',
+<                                 high: 'right'
+<                             }
+<                             [axisTitleOptions.align]
+<                         axisLine.animate({
+<                             d: linePath
+<                         });
+<                     }
+<                     [axisTitleOptions.align],
+<             .attr({
+<                 zIndex: 8
+<             })
+<             .attr({
+<                 zIndex: 1
+<             })
+<                                 crosshairs[i].attr({
+<                                     d: path,
+<                                     visibility: VISIBLE
+<                                 });
+<                     .attr({
+<                         zIndex: 9
+<                     })
+<                     legendItem.css({
+<                         fill: textColor
+<                     });
+<                     legendLine.attr({
+<                         stroke: lineColor
+<                     });
+<                     .attr({
+<                         zIndex: 2
+<                     })
+<                         .attr({
+<                             zIndex: 3
+<                         })
+<                     .attr({
+<                         zIndex: 7
+<                     })
+<                 fireEvent(chart, 'addSeries', {
+<                     options: options
+<                 }, function() {
+<                 css(loadingDiv, {
+<                     opacity: 0,
+<                     display: ''
+<                 });
+<                     css(loadingDiv, {
+<                         display: NONE
+<                     });
+<             fireEvent(chart, 'selection', {
+<                 resetSelection: true
+<             }, zoom);
+<                     css(container, {
+<                         left: 0,
+<                         top: 0
+<                     });
+<                 .attr({
+<                     zIndex: 3
+<                 })
+<                     .attr({
+<                         zIndex: 2
+<                     })
+<     } // end Chart
+<     // Hook for exporting module
+<     Chart.prototype.callbacks = [];
+<     /**
+<     var Point = function() {};
+<     Point.prototype = {
+<             point.firePointEvent('update', {
+<                 options: options
+<             }, function() {
+<     };
+<     /**
+<     var Series = function() {};
+<     Series.prototype = {
+<                             options = merge(options, {
+<                                 verticalAlign: 'middle'
+<                             });
+<                             options = merge(options, {
+<                                 y: {
+<                                     top: 14,
+<                                     middle: 4,
+<                                     bottom: -6
+<                                 }
+<                                 [options.verticalAlign]
+<                             });
+<                             options = merge(options, {
+<                                 verticalAlign: 'top'
+<                             });
+<                             options = merge(options, {
+<                                 y: -6
+<                             });
+<                         x += {
+<                             left: -1,
+<                             right: 1
+<                         }
+<                         [align] * point.barW / 2 || 0;
+<                     area.animate({
+<                         d: areaPath
+<                     });
+<                 graph.animate({
+<                     d: graphPath
+<                 });
+<             css = cursor && {
+<                 cursor: cursor
+<             },
+<                 tracker.attr({
+<                     d: trackerPath
+<                 });
+<     }; // end Series prototype
+<     /**
+<     var LineSeries = extendClass(Series);
+<     seriesTypes.line = LineSeries;
+<     /**
+<     var AreaSeries = extendClass(Series, {
+<     });
+<     seriesTypes.area = AreaSeries;
+<     /**
+<     var SplineSeries = extendClass( Series, {
+<     });
+<     seriesTypes.spline = SplineSeries;
+<     /**
+<     var AreaSplineSeries = extendClass(SplineSeries, {
+<     });
+<     seriesTypes.areaspline = AreaSplineSeries;
+<     /**
+<     var ColumnSeries = extendClass(Series, {
+<             css = cursor && {
+<                 cursor: cursor
+<             },
+<     });
+<     seriesTypes.column = ColumnSeries;
+<     var BarSeries = extendClass(ColumnSeries, {
+<     });
+<     seriesTypes.bar = BarSeries;
+<     /**
+<     var ScatterSeries = extendClass(Series, {
+<             css = cursor && {
+<                 cursor: cursor
+<             },
+<                     .attr({
+<                         isTracker: true
+<                     })
+<     });
+<     seriesTypes.scatter = ScatterSeries;
+<     /**
+<     var PiePoint = extendClass(Point, {
+<     });
+<     /**
+<     var PieSeries = extendClass(Series, {
+<                     .attr({
+<                         zIndex: 4
+<                     })
+<                     .attr({
+<                         zIndex: 5
+<                     })
+<                         {
+<                             'stroke-linejoin': 'round'
+<                         }
+<                                     ({
+<                                         left: connectorPadding,
+<                                         right: -connectorPadding
+<                                     }
+<                                     [labelPos[6]] || 0),
+<                                         connector.animate({
+<                                             d: connectorPath
+<                                         });
+<     });
+<     seriesTypes.pie = PieSeries;
+<     // global variables
+<     win.Highcharts = {
+<     };
+<         var registerGroupsStore = oraApp.getRegisterGroupsHighChart();
+<         var registersStore = oraApp.getRegistersForHighChart();
+<         var registersValueStore = oraApp.getDataRegistersForHighChart(this.fullRecord.id);
+<         var items = [];
+<         var fullRecord = this.fullRecord;
+>         //                            return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>         //                            return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+>         //                        if(this.getValue() < startDate.getValue()){
+<         var tbar = new Ext.Toolbar({
+<             items:[{
+<                 text:'Add Note',
+<                 iconCls:'companyAddIcon',
+<                 scope:this,
+<                 listeners : {
+<                     'click': function(){
+<                         var formWin = oraApp.getCreateNotesForm(fullRecord.id);
+<                         var formPanel = formWin.items.first();
+<                         formPanel.isAdd = true;
+<                         formPanel.form.clear();
+<                         formWin.show();
+<                         document.getElementById('device_id_in_layout').value = fullRecord.id;
+<                     },
+<                     scope:this
+<                 }
+<             }, '-', {
+<                 text:'Remove Note',
+<                 iconCls:'companyDeleteIcon',
+<                 handler:this.handleRemoveClick,
+<                 scope:this
+<             }]
+<         });
+<         var notes_grid = new Ext.grid.GridPanel({
+<             id: 'device_notes_grid',
+<             store: oraApp.getDataNotes(),
+<             layout: 'fit',
+<             loadMask: true,
+<             collapsible: true,
+<             //collapsed: true,
+<             stripeRows: true,
+<             columnLines: true,
+<             autoWidth: true,
+<             height: 400,
+<             autoHeight: true,
+<             frame: false,
+<             style: {
+<                 marginBottom: '10px'
+<             },
+<             columns: [{
+<                 header: 'Created At',
+<                 width: 150,
+<                 sortable: true,
+<                 renderer: Ext.util.Format.dateRenderer('Y/m/d'),
+<                 dataIndex: 'created_at'
+<             },{
+<                 header: 'Notes',
+<                 sortable: true,
+<                 dataIndex: 'notes'
+<             },{
+<                 header: 'Description',
+<                 sortable: true,
+<                 dataIndex: 'description'
+<             },{
+<                 header: 'Users',
+<                 dataIndex: 'user_id',
+<                 renderer: app.util.Render.UserName,
+<                 width: 180
+<             },{
+<                 header: 'Updated At',
+<                 width: 150,
+<                 sortable: true,
+<                 renderer: Ext.util.Format.dateRenderer('Y/m/d'),
+<                 dataIndex: 'updated_at'
+<             }],
+<             tbar: tbar,
+<             listeners: {
+<                 'rowdblclick': function(){
+<                     var r = this.getSelectionModel().getSelected();
+<                     var rI = this.getStore().indexOf(r);
+<                     var selectedId = r.id;
+<                     var rec = this.getStore().getAt(rI);
+<                     var formWin = oraApp.getEditNotesForm(selectedId);
+<                     var formPanel = formWin.items.first();
+<                     formPanel.activeRecord = rec;
+<                     formPanel.form.loadRecord(formPanel.activeRecord);
+<                     formWin.show();
+<                     document.getElementById('device_id_in_layout_for_edit').value = selectedId;
+<                 },
+<                 'rowclick': function(){
+<                     var r = this.getSelectionModel().getSelected();
+<                     var rI = this.getStore().indexOf(r);
+<                     var selectedId = r.id;
+<                     document.getElementById('device_id_in_layout_for_edit').value = selectedId;
+<                 }
+<             }
+<         });
+<         items.push(notes_grid);
+<         this.items = items;
+<         app.components.charts.DeviceHighChart.superclass.initComponent.apply(this, arguments);
+<         var pan = this;
+<         registerGroupsStore.on("load", function(){
+<             this.clearFilter();
+<             if(this.getCount() > 0){
+<                 this.filter([{
+<                     value: fullRecord.device_type_id
+<                         return record.get('display_type') == "Display Table" || record.get('display_type') == "Display Configuration - Table";
+< 
+<                 if(this.getCount() > 0){
+<                     ///////Start new Store for Register Value(Which Register Group display type is 'Display Table')///////////
+<                     var registerTableStore = new Ext.data.Store({
+<                         recordType: registersValueStore.recordType
+<                     });
+<                     var records = [];
+<                     registersValueStore.on("load", function(){
+<                         this.each(function(r){
+<                             records.push(r.copy());
+<                         });
+<                         registerTableStore.add(records);
+<                     });
+<                     ///////End new Store///////////
+<                     this.each(function(record){
+<                         registersStore.on("load", function(){
+<                             this.clearFilter();
+<                             this.filter([{
+<                                 property: "register_group_id",
+<                                 value: id
+<                             }]);
+<                             if(this.getCount() > 0){
+<                                 this.each(function(record){
+<                                     var name = record.get("tag");
+<                                     var id = record.get("rid");
+<                                         dataIndex: 'R'+id,
+<                                 
+<                                     ds: registerTableStore,
+<                                         marginBottom: '10px'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+<                                     columns: column
+<                                 });
+<                                 pan.insert(pan.items.length - 1, grid);
+<                                 pan.doLayout();
+<                         });
+<                     }, this);
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+<                 ////////////////////// High Chart Start ////////////////////////
+<                 this.clearFilter();
+<                 this.filter([{
+<                     property: "device_type_id",
+<                     value: fullRecord.device_type_id
+<                 }, {
+<                     fn: function(record){
+<                         return record.get('display_type') != "Display Table" && record.get('display_type') != "Display Configuration - Table";
+<                     scope: this
+<                 }]);
+<                 if(this.getCount() > 0){
+<                     this.each(function(record){
+<                         var display_type = record.get("display_type"),
+<                         display_name = record.get("display_name"),
+<                         name = record.get("name"),
+<                         id = record.get("id"),
+<                         leftaxis = record.get("leftaxis"), 
+<                         rightaxis = record.get("rightaxis"),
+<                         highchart,
+<                         series = [],
+<                         column = [];
+<                         column.push({
+<                             header: 'Date',
+<                             width: 150,
+<                             sortable: true,
+<                             dataIndex: 'date'
+<                         });
+<                         registersStore.on("load", function(){
+<                             this.clearFilter();
+<                             this.filter([{
+<                                 property: "register_group_id",
+<                                 value: id
+<                             }, {
+<                                 fn: function(record){
+<                                     return record.get('units') == leftaxis || record.get('units') == rightaxis;
+<                                 scope: this
+<                             }]);
+<                             if(this.getCount() > 0){
+<                                 this.each(function(record){
+<                                     var name = record.get("tag"), id = record.get("rid"), unit = record.get("units");
+<                                     var hash = {
+<                                         name: name,
+<                                         color: getRandomColor(),
+<                                         unit: unit
+<                                     };
+<                                     if(unit == leftaxis){
+<                                         hash.type = getGraphDisplayType(display_type, 'left');
+<                                         hash.yField = 'R'+id;
+<                                     }
+<                                     else if(unit == rightaxis){
+<                                         hash.type = getGraphDisplayType(display_type, 'right');
+<                                         hash.yAxis = 1;
+<                                         hash.yField = 'R'+id;
+<                                     series.push(hash);
+<                                     column.push({
+<                                         header: name+" ("+unit+")",
+<                                         dataIndex: 'R'+id,
+<                                         width: 100,
+<                                         align: 'right',
+<                                         sortable: true
+<                                 }, this);
+<                                 ///////Start new Store for Graphical Data(Which Register Group display type is 'Map')///////////
+<                                 //var graphValueStore = new Ext.data.Store({
+<                                 //    recordType: registersValueStore.recordType
+<                                 //});
+<                                 //var records = [];
+<                                 //registersValueStore.on("load", function(){
+<                                 //    this.each(function(r){
+<                                 //        records.push(r.copy());
+<                                 //    });
+<                                 //    graphValueStore.add(records);
+<                                 //});
+<                                 ///////End new Store for Graphical Data //////////
+<                                 highchart = new Ext.ux.HighChart({
+<                                     series: series,
+<                                     layout: 'fit',
+<                                     store: registersValueStore,
+<                                             labels: {
+<                                                 y: 20,
+<                                                 text: leftaxis||'',
+<                                                 text: rightaxis||'',
+<                                                 return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' '+this.series.options.unit;
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y+' psi'
+>                                             return '<b>'+this.series.name+'</b><br/>'+this.x+'<br/>'+this.y +' InH2O';
+<                                 ///////Start new Store for Numaric Data(Which Register Group display type is 'Map')///////////
+<                                 var numaricValueStore = new Ext.data.Store({
+<                                     recordType: registersValueStore.recordType
+<                                 });
+<                                 var records = [];
+<                                 registersValueStore.on("load", function(){
+<                                     this.each(function(r){
+<                                         records.push(r.copy());
+<                                     });
+<                                     numaricValueStore.add(records);
+<                                 });
+<                                 ///////End new Store for Numaric Data //////////
+<                                     store: numaricValueStore,
+<                                     columns: column
+<                                 pan.insert(pan.items.length-1, {
+<                                     style: {
+<                                         marginBottom: '10px'
+<                                     /*tools:[{
+<                                     }],*/
+<                                                 var tab = Ext.getCmp("pressuresTabPanel-"+devicetypeIndex+"-"+id).getActiveTab();
+<                                                 if(tab.title == "Graphical Data"){
+<                                                     var graph = Ext.getCmp("pressuresChart-"+devicetypeIndex+"-"+id);
+<                                                     graph.store.clearFilter();
+<                                                     if(start && end){
+<                                                         graph.store.filterBy(function(record, id){
+<                                                             rec = Date.parseDate(record.get("date"), "Y-m-d H:i:s");
+<                                                             return rec.format("Y-m-d") >= start.format("Y-m-d") && rec.format("Y-m-d") <= end.format("Y-m-d");
+<                                                         });
+<                                                         graph.refresh();
+<                                                     }
+<                                                     else if(start && !end){
+<                                                         graph.store.filterBy(function(record, id){
+<                                                             rec = Date.parseDate(record.get("date"), "Y-m-d H:i:s");
+<                                                             return rec.format("Y-m-d") >= start.format("Y-m-d");
+<                                                         });
+<                                                         graph.refresh();
+<                                                     }
+<                                                     else if(!start && end){
+<                                                         graph.store.filterBy(function(record, id){
+<                                                             rec = Date.parseDate(record.get("date"), "Y-m-d H:i:s");
+<                                                             return rec.format("Y-m-d") <= end.format("Y-m-d");
+<                                                         });
+<                                                         graph.refresh();
+<                                                     }
+<                                                 }
+<                                                 else{
+<                                                 var graph = Ext.getCmp("pressuresChart-"+devicetypeIndex+"-"+id);
+<                                                 graph.store.clearFilter();
+<                                                 graph.refresh();
+<                                                 var numaricStore = Ext.getCmp("pressuresNumaricGrid-"+devicetypeIndex+"-"+id).store;
+<                                                 numaricStore.clearFilter();
+<                                         activeTab: 0,
+<                                             items: highchart
+<                                 pan.doLayout();
+<                     });
+<             ////////////////////// High Chart End //////////////////////////
+<     dataRefresh: function() {
+<                             case 7: case 8: case 9: case 10: case 11:
+<                         deviceTypeCombo.store.load();
+<                             case 7: case 8: case 9: case 10: case 11:
+<     getDataNotes: function(cfg){
+<         if(this.dataStores.notes === undefined){
+<     getRegisterGroups: function(){
+<         if(this.dataStores.registerGroupsStore === undefined){
+<     getRegisterGroupsHighChart: function(){
+<         this.dataStores.registerGroupsStoreHighChart = new Ext.data.JsonStore({
+<             fields:[{
+<                 name: 'id',
+<                 type: 'int'
+<             }, {
+<                 name: 'device_type_id',
+<                 type: 'int'
+<             }, {
+<                 name: 'name',
+<                 type: 'string'
+<             }, {
+<                 name: 'display_name',
+<                 type: 'string'
+<             }, {
+<                 name: 'display_type',
+<                 type: 'string'
+<             }, {
+<                 name: 'leftaxis',
+<                 type: 'string'
+<             }, {
+<                 name: 'rightaxis',
+<                 type: 'string'
+<             }],
+<             proxy: new Ext.data.HttpProxy({
+<                 url: '/list-of-register-groups-for-highchart',
+<                 method: 'GET'
+<             }),
+<             autoLoad: true
+<         });
+<         return(this.dataStores.registerGroupsStoreHighChart);
+<     },
+< 
+<     getDataRegistersForHighChart: function(did){
+<         this.dataStores.registersforhighchart = new app.data.RESTfulJsonStore({
+<             id: 'ds_registers_for_highchart',
+<             url: '/data-to-display',
+<             sortInfo: {
+<                 field: 'id',
+<                 direction: 'ASC'
+<             },
+<             baseParams: {
+<                 device_id: did
+<             }
+<         });
+<         return(this.dataStores.registersforhighchart);
+<     },
+< 
+<     getRegistersForHighChart: function(){
+<         this.dataStores.registersStoreForHighChart = new Ext.data.JsonStore({
+<             fields:[{
+<                 name: 'id',
+<                 type: 'int'
+<             }, {
+<                 name: 'rid',
+<                 type: 'int'
+<             }, {
+<                 name: 'register_group_id',
+<                 type: 'int'
+<             }, {
+<                 name: 'tag',
+<                 type: 'string'
+<             }, {
+<                 name: 'units',
+<                 type: 'string'
+<             }],
+<             proxy: new Ext.data.HttpProxy({
+<                 url: '/list-of-registers-for-highchart',
+<                 method: 'GET'
+<             }),
+<             autoLoad: true
+<         });
+<         return(this.dataStores.registersStoreForHighChart);
+<     },
+< 
+< 
+< function getGraphDisplayType(v, axis){
+<     v = v.replace('Display Graph - ', '');
+<     v = v.split('/');
+<     switch(axis){
+<         case 'left':
+<             v = getDisplayType(v[0]);
+<             break;
+<         default:
+<             if(v.length > 1){
+<                 v = getDisplayType(v[1]);
+<             }
+<             else{
+<                 v = getDisplayType(v[0]);
+<             }
+<             
+<     }
+<     return v;
+< }
+< 
+< function getDisplayType(v){
+<     switch(v){
+<         case 'Bar':
+<             v = 'column';
+<             break;
+<         default:
+<             v = v.toLowerCase();
+<     }
+<     return v;
+< }
+< // Random Color generator
+< function getRandomColor(){
+<     return '#' + ('000000' + Math.floor(Math.random()*0xFFFFFF).toString(16)).substr(-6);
+< }
