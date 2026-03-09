@@ -1,30 +1,816 @@
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-<meta name="google-site-verification" content="ggswIneTnrjQdJo40Pp_26o03m9LFCseA7hkUuPwZ5E" />	
-		<title>Rocket Science Innovations</title>
-	<style>
-		h1, h2, h3, h4, ul{
-			margin: 0px;
-			padding: 0px;
-			font-size: 0px;
-		}
-		html, body{
-			background-color: black;
-		}
-	</style>
-	</head><body>
-		<center>
-		<table style="height: 100%;"><tbody><tr><td align="center">
-			<font style="color: white; font-family: tahoma;">
-				Rocket Science Innovation<br>
-				<br>P:303.834.7418
-				
-				<br>
-				<div style="font-family: tahoma; font-size: 9px; color:#999999;"><br>I'll prbly never have time to update this page, <a href="mailto: turbohoje@gmail.com">email</a>/call me instead.</div>
-				<br>
-				
-			
-		<br>
-	</font></td></tr></tbody></table>
-		</center>
-	</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-site-verification" content="ggswIneTnrjQdJo40Pp_26o03m9LFCseA7hkUuPwZ5E">
+  <title>Rocket Science Innovation — Software Engineering &amp; SRE | Denver, CO</title>
+  <meta name="description" content="26+ years of software engineering, site reliability, DevOps, and cloud infrastructure. Available for contract &amp; 1099 work. Denver, CO.">
+  <meta name="keywords" content="SRE, Site Reliability Engineer, DevOps, Cloud Infrastructure, Kubernetes, AWS, GCP, Azure, Denver, Colorado, contract, 1099, software engineer">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #4db843;
+      --green-dark: #3a9132;
+      --navy:       #0d1b2a;
+      --navy-mid:   #152639;
+      --slate:      #1e3a52;
+      --text:       #1a1a1a;
+      --muted:      #5a6a7a;
+      --light:      #f4f7fa;
+      --white:      #ffffff;
+      --border:     #dde3ea;
+      --tag-bg:     #e8f5e9;
+      --tag-text:   #2e7d32;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--navy);
+      border-bottom: 2px solid var(--green);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+    }
+    .brand-sub {
+      font-size: 0.7rem;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .header-contact {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .header-contact a {
+      color: var(--white);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      opacity: 0.9;
+      transition: opacity 0.15s;
+    }
+    .header-contact a:hover { opacity: 1; color: var(--green); }
+    .header-contact .icon { font-style: normal; font-size: 1rem; }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, var(--slate) 100%);
+      color: var(--white);
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      background: var(--green);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2rem;
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .hero h1 span { color: var(--green); }
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: #a0b4c8;
+      margin-bottom: 0.75rem;
+    }
+    .hero-location {
+      font-size: 0.9rem;
+      color: #6a8aaa;
+      margin-bottom: 2.25rem;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+    .btn-primary {
+      background: var(--green);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    .btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+    /* ── STATS BAR ──────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--green);
+      color: var(--white);
+    }
+    .stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
+      text-align: center;
+    }
+    .stat-item strong {
+      display: block;
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-item span {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.9;
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────────── */
+    section { padding: 4rem 1.5rem; }
+    section.alt { background: var(--light); }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.75rem;
+    }
+    .section-header h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .section-header p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--green);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    /* ── SERVICES GRID ───────────────────────────────────────── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .service-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .service-card:hover {
+      box-shadow: 0 8px 32px rgba(13,27,42,0.12);
+      transform: translateY(-3px);
+    }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .service-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .service-card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── TECH SKILLS ─────────────────────────────────────────── */
+    .skills-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .skill-group {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .skill-group h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--green-dark);
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--tag-bg);
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.3rem;
+      white-space: nowrap;
+    }
+
+    /* ── EXPERIENCE TIMELINE ─────────────────────────────────── */
+    .timeline {
+      position: relative;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 1.25rem;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-item {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+      position: relative;
+    }
+    .timeline-dot {
+      flex-shrink: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: var(--green);
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 2px var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      z-index: 1;
+    }
+    .timeline-body {
+      padding-top: 0.35rem;
+      flex: 1;
+    }
+    .timeline-body h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.1rem;
+    }
+    .timeline-body .role {
+      font-size: 0.85rem;
+      color: var(--green-dark);
+      font-weight: 600;
+      margin-bottom: 0.1rem;
+    }
+    .timeline-body .period {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .timeline-body p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── OTHER SERVICES ──────────────────────────────────────── */
+    .other-services-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+    }
+    .other-tag {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── CONTACT ─────────────────────────────────────────────── */
+    .contact-section {
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+      padding: 4.5rem 1.5rem;
+    }
+    .contact-section .section-label { color: var(--green); }
+    .contact-section h2 {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .contact-section p {
+      color: #7a9ab8;
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .contact-cards {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .contact-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0.75rem;
+      padding: 1.5rem 2rem;
+      min-width: 200px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-card:hover {
+      background: rgba(77,184,67,0.12);
+      border-color: var(--green);
+    }
+    .contact-card .c-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+    .contact-card .c-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6a8aaa;
+      margin-bottom: 0.25rem;
+    }
+    .contact-card .c-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .contact-card .c-value a { color: inherit; }
+    .contact-card:hover .c-value { color: var(--green); }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      background: #07111d;
+      color: #4a6070;
+      text-align: center;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.78rem;
+    }
+    footer span { color: var(--green); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .header-contact { width: 100%; }
+      .hero { padding: 3.5rem 1rem 3rem; }
+      section { padding: 3rem 1rem; }
+      .timeline::before { display: none; }
+      .stat-item strong { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <img src="logo.png" alt="Rocket Science Innovation logo">
+      <div class="brand-text">
+        <span class="brand-name">Rocket Science Innovation</span>
+        <span class="brand-sub">Denver, CO</span>
+      </div>
+    </div>
+    <nav class="header-contact">
+      <a href="tel:+13038347418">
+        <i class="icon">&#9990;</i> 303-834-7418
+      </a>
+      <a href="mailto:justin@rocketscience.cc">
+        <i class="icon">&#9993;</i> justin@rocketscience.cc
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────────────────── -->
+<section class="hero">
+  <span class="hero-eyebrow">Available for Contract &amp; 1099 Work</span>
+  <h1>
+    <span>26+ Years</span> of Software<br>Engineering Excellence
+  </h1>
+  <p class="hero-subtitle">Senior SRE &nbsp;·&nbsp; DevOps &nbsp;·&nbsp; Cloud Infrastructure &nbsp;·&nbsp; AI Systems</p>
+  <p class="hero-location">&#128205; Denver, CO &nbsp;&mdash;&nbsp; Remote &amp; On-site &nbsp;&mdash;&nbsp; Colorado LLC</p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="tel:+13038347418">&#9990; &nbsp;Call Now</a>
+    <a class="btn btn-outline" href="mailto:justin@rocketscience.cc">&#9993; &nbsp;Send Email</a>
+  </div>
+</section>
+
+<!-- ── STATS BAR ──────────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <strong>26+</strong>
+      <span>Years Experience</span>
+    </div>
+    <div class="stat-item">
+      <strong>10+</strong>
+      <span>Companies Served</span>
+    </div>
+    <div class="stat-item">
+      <strong>AWS &middot; GCP &middot; Azure</strong>
+      <span>Multi-Cloud</span>
+    </div>
+    <div class="stat-item">
+      <strong>FedRAMP &middot; SOC2</strong>
+      <span>Compliance</span>
+    </div>
+    <div class="stat-item">
+      <strong>MSc</strong>
+      <span>Data Engineering &nbsp;·&nbsp; PMP &nbsp;·&nbsp; CSM</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SERVICES ───────────────────────────────────────────────── -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">What I Do</span>
+      <h2>Software Engineering Services</h2>
+      <p>Deep expertise across the full infrastructure stack — from bare metal to cloud-native, from on-call incident response to long-term platform architecture.</p>
+    </div>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <span class="card-icon">&#128268;</span>
+        <h3>Site Reliability Engineering</h3>
+        <p>SLO/SLA design, on-call runbooks, incident management, observability platforms, and blameless postmortem culture. Built SRE orgs from scratch at Crusoe, AppOmni, and Andromeda Cluster.</p>
+      </div>
+
+      <div class="service-card">
+        <span class="card-icon">&#9729;</span>
+        <h3>Cloud Infrastructure</h3>
+        <p>Multi-cloud architecture across AWS, GCP, and Azure. VPC design, cost optimization, on-premise to cloud migrations, and FinOps. Comfortable taking existing infrastructure and making it scale.</p>
+      </div>
+
+      <div class="service-card">
+        <span class="card-icon">&#9881;</span>
+        <h3>DevOps &amp; Platform Engineering</h3>
+        <p>CI/CD pipelines, GitOps (Argo CD, FluxCD), Kubernetes, Helm, Terraform, and Ansible. Infrastructure as Code from day one, deployment automation that teams actually want to use.</p>
+      </div>
+
+      <div class="service-card">
+        <span class="card-icon">&#127760;</span>
+        <h3>AI &amp; GPU Infrastructure</h3>
+        <p>GPU cluster operations, SLURM, DCGM health monitoring, NVIDIA NGC, InfiniBand networking, distributed ML training pipelines, and heterogeneous fleet observability.</p>
+      </div>
+
+      <div class="service-card">
+        <span class="card-icon">&#128187;</span>
+        <h3>Full Stack Development</h3>
+        <p>Python, Go, Java, JavaScript/Node, Scala, and more. REST and gRPC APIs, frontend frameworks, embedded firmware, and PCB-level hardware integration for industrial IoT.</p>
+      </div>
+
+      <div class="service-card">
+        <span class="card-icon">&#128274;</span>
+        <h3>Security &amp; Compliance</h3>
+        <p>FedRAMP and SOC2 compliance lifecycle management, SSPM/SIEM operations, secrets management with HashiCorp Vault, IAM design, and unified authentication infrastructure.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TECH SKILLS ─────────────────────────────────────────────── -->
+<section class="alt">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">Technical Depth</span>
+      <h2>Skills &amp; Technologies</h2>
+      <p>A breadth of tools built over 26+ years — from kernel-level Linux to managed cloud services.</p>
+    </div>
+    <div class="skills-groups">
+
+      <div class="skill-group">
+        <h3>Cloud &amp; Platforms</h3>
+        <div class="tags">
+          <span class="tag">AWS</span>
+          <span class="tag">GCP</span>
+          <span class="tag">Azure</span>
+          <span class="tag">Crusoe</span>
+          <span class="tag">Digital Ocean</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Containers &amp; Orchestration</h3>
+        <div class="tags">
+          <span class="tag">Kubernetes</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Helm</span>
+          <span class="tag">Argo CD</span>
+          <span class="tag">FluxCD</span>
+          <span class="tag">Podman</span>
+          <span class="tag">Swarm</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Infrastructure as Code</h3>
+        <div class="tags">
+          <span class="tag">Terraform</span>
+          <span class="tag">Terragrunt</span>
+          <span class="tag">Ansible</span>
+          <span class="tag">Puppet</span>
+          <span class="tag">Salt</span>
+          <span class="tag">Packer</span>
+          <span class="tag">MaaS</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>AI / GPU / HPC</h3>
+        <div class="tags">
+          <span class="tag">CUDA</span>
+          <span class="tag">NCCL</span>
+          <span class="tag">DCGM</span>
+          <span class="tag">PyTorch</span>
+          <span class="tag">SLURM</span>
+          <span class="tag">NVIDIA NGC</span>
+          <span class="tag">InfiniBand</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Programming</h3>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">Go</span>
+          <span class="tag">Java</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">Scala</span>
+          <span class="tag">C/C++</span>
+          <span class="tag">Perl</span>
+          <span class="tag">PHP</span>
+          <span class="tag">Ruby</span>
+          <span class="tag">bash/zsh</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Observability &amp; Ops</h3>
+        <div class="tags">
+          <span class="tag">Prometheus</span>
+          <span class="tag">Grafana</span>
+          <span class="tag">DataDog</span>
+          <span class="tag">PagerDuty</span>
+          <span class="tag">FireHydrant</span>
+          <span class="tag">ELK Stack</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Storage &amp; Data</h3>
+        <div class="tags">
+          <span class="tag">Ceph</span>
+          <span class="tag">Weka</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">MongoDB</span>
+          <span class="tag">Cassandra</span>
+          <span class="tag">BigQuery</span>
+          <span class="tag">Elasticsearch</span>
+          <span class="tag">Redshift</span>
+        </div>
+      </div>
+
+      <div class="skill-group">
+        <h3>Security &amp; Networking</h3>
+        <div class="tags">
+          <span class="tag">FedRAMP</span>
+          <span class="tag">SOC2</span>
+          <span class="tag">HashiCorp Vault</span>
+          <span class="tag">Tailscale</span>
+          <span class="tag">IAM</span>
+          <span class="tag">Pomerium</span>
+          <span class="tag">nginx</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERIENCE ──────────────────────────────────────────────── -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">Track Record</span>
+      <h2>Notable Experience</h2>
+      <p>A career built at companies pushing the edges of scale, reliability, and infrastructure complexity.</p>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#127760;</div>
+        <div class="timeline-body">
+          <h3>Andromeda Cluster</h3>
+          <div class="role">AI Infrastructure Engineer</div>
+          <div class="period">Dec 2025 – Present</div>
+          <p>GPU cluster operations, aggregated observability for heterogeneous SLURM and Kubernetes fleets, DCGM health monitoring, Argo CD release management.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#9881;</div>
+        <div class="timeline-body">
+          <h3>AppOmni</h3>
+          <div class="role">Technical Lead Manager / Lead SRE</div>
+          <div class="period">Nov 2023 – Dec 2025</div>
+          <p>Grew SRE team 1 to 5. FedRAMP &amp; SOC2 compliance. FinOps ownership. Blameless incident culture, FireHydrant implementation, cloud cost optimization.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#128268;</div>
+        <div class="timeline-body">
+          <h3>Crusoe</h3>
+          <div class="role">Staff Site Reliability Engineer</div>
+          <div class="period">Aug 2021 – Nov 2023</div>
+          <p>First SRE hire. Built and led a 6-person team. Ground-to-cloud GPU cloud platform: PXE, MaaS, Rocky Linux, Kubernetes, Tailscale. Scaled from 1 to 5 mobile data centers.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#9729;</div>
+        <div class="timeline-body">
+          <h3>Adobe / Marketo</h3>
+          <div class="role">Staff SRE → Sr. SRE</div>
+          <div class="period">Mar 2019 – Aug 2021</div>
+          <p>GCP migration, AWS re-architecture, containerized deployments, bare-metal Kubernetes monitoring, Puppet/Ansible fleet management at 6k-host scale.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#128217;</div>
+        <div class="timeline-body">
+          <h3>eBay</h3>
+          <div class="role">Site Reliability Engineer</div>
+          <div class="period">Jul 2017 – Mar 2019</div>
+          <p>300B events/day across 6k services. China mobile market expansion. Terraform, GCP, Drone CI, HashiCorp Vault, multi-region monitoring and fraud detection.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">&#128640;</div>
+        <div class="timeline-body">
+          <h3>Rocket Science Innovation, LLC</h3>
+          <div class="role">Founder / Contract Developer</div>
+          <div class="period">2006 – Present</div>
+          <p>13-year oilfield telemetry engagement, industrial IoT edge computing, PCB design, microcontroller firmware, cloud architecture, full-stack development across Python, JavaScript, and Java.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── OTHER SERVICES ──────────────────────────────────────────── -->
+<section class="alt">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-label">Additional 1099 Work</span>
+      <h2>Other Services</h2>
+      <p>Beyond software, I take on skilled trade and general contracting work in the Denver metro area on a 1099 basis.</p>
+    </div>
+    <div class="other-services-grid">
+      <span class="other-tag">Rental management</span>
+      <span class="other-tag">General Handyman</span>
+      <span class="other-tag">Home Repairs</span>
+      <span class="other-tag">Carpentry</span>
+      <span class="other-tag">Finish Work</span>
+      <span class="other-tag">Painting</span>
+      <span class="other-tag">Drywall</span>
+      <span class="other-tag">Electrical</span>
+      <span class="other-tag">Plumbing</span>
+      <span class="other-tag">Flooring</span>
+      <span class="other-tag">Decking</span>
+      <span class="other-tag">Demolition</span>
+      <span class="other-tag">General Construction</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ─────────────────────────────────────────────────── -->
+<section class="contact-section">
+  <span class="section-label">Get in Touch</span>
+  <h2>Let's Work Together</h2>
+  <p>Available for contract and 1099 engagements. Remote-friendly, Colorado-based LLC.</p>
+  <div class="contact-cards">
+    <a class="contact-card" href="tel:+13038347418">
+      <div class="c-icon">&#9990;</div>
+      <div class="c-label">Phone</div>
+      <div class="c-value">303-834-7418</div>
+    </a>
+    <a class="contact-card" href="mailto:justin@rocketscience.cc">
+      <div class="c-icon">&#9993;</div>
+      <div class="c-label">Email</div>
+      <div class="c-value">justin@rocketscience.cc</div>
+    </a>
+    <div class="contact-card">
+      <div class="c-icon">&#128205;</div>
+      <div class="c-label">Location</div>
+      <div class="c-value">Denver, CO</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer>
+  &copy; 2025 <span>Rocket Science Innovation, LLC</span> &nbsp;&middot;&nbsp; Denver, CO &nbsp;&middot;&nbsp; All rights reserved.
+</footer>
+
+</body>
+</html>
